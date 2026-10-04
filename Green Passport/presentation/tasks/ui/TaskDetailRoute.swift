@@ -5,7 +5,6 @@ import UIKit
 struct TaskDetailRoute: View {
     private static let minSheetHeight: CGFloat = 320
     private static let sheetChromeHeight: CGFloat = 80
-    private static let maxSheetHeightFraction: CGFloat = 0.9
 
     @Environment(\.dismiss) private var dismiss
     @State private var viewModel: TaskDetailViewModel
@@ -15,7 +14,6 @@ struct TaskDetailRoute: View {
     @State private var isScannerPresented = false
     @State private var libraryItem: PhotosPickerItem?
     @State private var measuredContentHeight: CGFloat = 0
-    @State private var containerHeight: CGFloat = 0
 
     init(taskId: String, container: AppDIContainer) {
         _viewModel = State(initialValue: container.buildTaskDetailViewModel(taskId: taskId))
@@ -37,7 +35,6 @@ struct TaskDetailRoute: View {
             }
         }
         .onPreferenceChange(ContentHeightPreferenceKey.self) { measuredContentHeight = $0 }
-        .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { containerHeight = $0 }
         .presentationDetents([.height(sheetHeight)])
         .presentationDragIndicator(.visible)
         .task {
@@ -85,11 +82,7 @@ struct TaskDetailRoute: View {
     }
 
     private var sheetHeight: CGFloat {
-        let desired = max(measuredContentHeight + Self.sheetChromeHeight, Self.minSheetHeight)
-        guard containerHeight > 0 else {
-            return desired
-        }
-        return min(desired, containerHeight * Self.maxSheetHeightFraction)
+        return max(measuredContentHeight + Self.sheetChromeHeight, Self.minSheetHeight)
     }
 
     private func confirm() {
