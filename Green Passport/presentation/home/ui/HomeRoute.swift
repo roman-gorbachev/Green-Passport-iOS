@@ -1,6 +1,9 @@
 import SwiftUI
 
 struct HomeRoute: View {
+    private static let streakSheetEstimatedHeight: CGFloat = 360
+    private static let streakSheetBottomAllowance: CGFloat = 24
+
     let container: AppDIContainer
 
     @Environment(TabRouter.self) private var router
@@ -8,6 +11,7 @@ struct HomeRoute: View {
     @State private var selectedTask: TaskSheetItem?
     @State private var selectedEvent: EventSheetItem?
     @State private var isStreakSheetPresented = false
+    @State private var streakSheetHeight: CGFloat = HomeRoute.streakSheetEstimatedHeight
 
     init(container: AppDIContainer) {
         self.container = container
@@ -32,7 +36,11 @@ struct HomeRoute: View {
         .eventDetailSheet(item: $selectedEvent, container: container)
         .sheet(isPresented: $isStreakSheetPresented) {
             StreakSheet(summary: Streak.summary(of: viewModel.uiState.streak, at: Date()))
-                .presentationDetents([.medium])
+                .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { height in
+                    streakSheetHeight = height + Self.streakSheetBottomAllowance
+                }
+                .presentationDetents([.height(streakSheetHeight)])
+                .presentationDragIndicator(.visible)
                 .presentationBackground(Palette.cardBackground)
         }
     }

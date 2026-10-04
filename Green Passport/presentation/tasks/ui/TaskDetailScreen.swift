@@ -51,7 +51,9 @@ struct TaskDetailScreen: View {
                         .foregroundStyle(Palette.secondaryText)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(Spacing.screenHorizontal)
+                .padding(.horizontal, Spacing.screenHorizontal)
+                .padding(.top, Spacing.screenHorizontal)
+                .padding(.bottom, Spacing.small)
                 .background {
                     GeometryReader { proxy in
                         Color.clear.preference(key: ContentHeightPreferenceKey.self, value: proxy.size.height)

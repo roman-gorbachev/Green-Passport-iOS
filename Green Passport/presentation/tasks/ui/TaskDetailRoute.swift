@@ -3,10 +3,9 @@ import SwiftUI
 import UIKit
 
 struct TaskDetailRoute: View {
-    private static let minSheetHeight: CGFloat = 320
-    private static let sheetChromeHeight: CGFloat = 80
+    private static let minSheetHeight: CGFloat = 200
+    private static let sheetChromeHeight: CGFloat = 32
 
-    @Environment(\.dismiss) private var dismiss
     @State private var viewModel: TaskDetailViewModel
     @State private var isPhotoSourcePresented = false
     @State private var isLibraryPresented = false
@@ -26,13 +25,7 @@ struct TaskDetailRoute: View {
                 onConfirm: confirm,
                 onRetry: viewModel.retry
             )
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button(role: .close) {
-                        dismiss()
-                    }
-                }
-            }
+            .toolbar(.hidden, for: .navigationBar)
         }
         .onPreferenceChange(ContentHeightPreferenceKey.self) { measuredContentHeight = $0 }
         .presentationDetents([.height(sheetHeight)])

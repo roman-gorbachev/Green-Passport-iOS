@@ -20,23 +20,33 @@ struct MapRoute: View {
         .task(id: viewModel.observationId) {
             await viewModel.observe()
         }
-        .sheet(item: selectedPoint) { point in
-            MapPointSheet(
-                point: point,
-                isSaved: viewModel.uiState.savedPointIds.contains(point.id),
-                onToggleSaved: { viewModel.toggleSaved(point) },
-                onRoute: { openDirections(to: point) }
-            )
-            .presentationDetents([.height(MapPointSheet.height)])
-            .presentationDragIndicator(.visible)
-            .presentationBackgroundInteraction(.enabled(upThrough: .height(MapPointSheet.height)))
+        .sheet(isPresented: isSheetPresented) {
+            Group {
+                if let point = selectedPoint {
+                    MapPointSheet(
+                        point: point,
+                        isSaved: viewModel.uiState.savedPointIds.contains(point.id),
+                        onToggleSaved: { viewModel.toggleSaved(point) },
+                        onRoute: { openDirections(to: point) }
+                    )
+                }
+            }
+            .mapPointSheetPresentation()
         }
     }
 
-    private var selectedPoint: Binding<MapPoint?> {
+    private var selectedPoint: MapPoint? {
+        return viewModel.uiState.points.first { return $0.id == selectedPointId }
+    }
+
+    private var isSheetPresented: Binding<Bool> {
         return Binding(
-            get: { return viewModel.uiState.points.first { return $0.id == selectedPointId } },
-            set: { selectedPointId = $0?.id }
+            get: { return selectedPoint != nil },
+            set: { isPresented in
+                if !isPresented {
+                    selectedPointId = nil
+                }
+            }
         )
     }
 

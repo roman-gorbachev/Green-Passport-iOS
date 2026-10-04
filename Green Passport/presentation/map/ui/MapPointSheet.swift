@@ -1,7 +1,8 @@
 import SwiftUI
 
 struct MapPointSheet: View {
-    static let height: CGFloat = 230
+    static let height: CGFloat = 250
+    fileprivate static let bottomAllowance: CGFloat = 16
     private static let tileSize: CGFloat = 44
 
     let point: MapPoint
@@ -53,8 +54,29 @@ struct MapPointSheet: View {
             }
             .controlSize(.large)
         }
-        .padding(Spacing.screenHorizontal)
-        .frame(maxHeight: .infinity, alignment: .top)
+        .padding(.horizontal, Spacing.screenHorizontal)
+        .padding(.top, Spacing.medium)
+        .padding(.bottom, Spacing.small)
+    }
+}
+
+private struct MapPointSheetPresentation: ViewModifier {
+    @State private var height = MapPointSheet.height
+
+    func body(content: Content) -> some View {
+        content
+            .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { measured in
+                height = measured + MapPointSheet.bottomAllowance
+            }
+            .presentationDetents([.height(height)])
+            .presentationDragIndicator(.visible)
+            .presentationBackgroundInteraction(.enabled(upThrough: .height(height)))
+    }
+}
+
+extension View {
+    func mapPointSheetPresentation() -> some View {
+        return modifier(MapPointSheetPresentation())
     }
 }
 

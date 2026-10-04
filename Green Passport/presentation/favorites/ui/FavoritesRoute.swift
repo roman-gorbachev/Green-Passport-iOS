@@ -38,9 +38,7 @@ struct FavoritesRoute: View {
                 onToggleSaved: { viewModel.toggleSavedPlace(point) },
                 onRoute: { openDirections(to: point) }
             )
-            .presentationDetents([.height(MapPointSheet.height), .medium])
-            .presentationDragIndicator(.visible)
-            .presentationBackgroundInteraction(.enabled(upThrough: .height(MapPointSheet.height)))
+            .mapPointSheetPresentation()
         }
     }
 
