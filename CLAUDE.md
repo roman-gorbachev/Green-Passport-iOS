@@ -6,6 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Green Passport ("Зелёный паспорт") — a SwiftUI iOS app that rewards eco-friendly actions with points and XP. It is a port of the Android app in `~/Personal/greenpassport-android` and shares its Firebase backend (project `chatroom-85fb8`: Auth, Firestore, Cloud Functions in `europe-central2`, Storage). Single app target `Green Passport`, bundle id `com.smartcity.greenpassport`, iPhone only, portrait, iOS deployment target 18.0 (built with the iOS 26 SDK). Dependencies are SwiftPM only, resolved via the `.xcodeproj` (no workspace, no Podfile).
 
+Storage rules are shared with OurMemory (one bucket in `chatroom-85fb8`): the only copy that gets deployed is `~/Personal/greenpassport-android/storage.rules`, mirrored in `~/Personal/OurMemory-80/firebase/storage.rules`. Edit them there, never here.
+
 The Android repo is the reference for business logic: Firestore field names, callable names, reward rules, validation. When porting a feature, read the matching Android module first (`feature/<name>` and `core`), and keep behaviour identical unless `claude/ux-spec.ru.md` records a deliberate difference.
 
 ## Team Conventions
