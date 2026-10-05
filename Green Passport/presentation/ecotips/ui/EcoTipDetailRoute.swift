@@ -11,6 +11,7 @@ struct EcoTipDetailRoute: View {
         EcoTipDetailScreen(
             uiState: viewModel.uiState,
             onMarkRead: viewModel.markRead,
+            onToggleBookmark: viewModel.toggleBookmark,
             onRetry: viewModel.retry
         )
         .task {

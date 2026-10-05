@@ -10,6 +10,8 @@ final class FavoritesViewModel {
     @ObservationIgnored private let observeBookmarkedTipIds: ObserveBookmarkedTipIdsUseCase
     @ObservationIgnored private let savedMapPointIds: SavedMapPointIdsUseCase
     @ObservationIgnored private let toggleSavedMapPoint: ToggleSavedMapPointUseCase
+    @ObservationIgnored private let toggleTaskFavorite: ToggleTaskFavoriteUseCase
+    @ObservationIgnored private let toggleTipBookmark: ToggleTipBookmarkUseCase
     @ObservationIgnored private let sessionTask = LatestTask()
     @ObservationIgnored private var userId: String?
     @ObservationIgnored private var loadedSources: Set<FavoritesSource> = []
@@ -24,7 +26,9 @@ final class FavoritesViewModel {
         observeFavoriteTaskIds: ObserveFavoriteTaskIdsUseCase,
         observeBookmarkedTipIds: ObserveBookmarkedTipIdsUseCase,
         savedMapPointIds: SavedMapPointIdsUseCase,
-        toggleSavedMapPoint: ToggleSavedMapPointUseCase
+        toggleSavedMapPoint: ToggleSavedMapPointUseCase,
+        toggleTaskFavorite: ToggleTaskFavoriteUseCase,
+        toggleTipBookmark: ToggleTipBookmarkUseCase
     ) {
         self.observeSession = observeSession
         self.observeTasks = observeTasks
@@ -34,6 +38,8 @@ final class FavoritesViewModel {
         self.observeBookmarkedTipIds = observeBookmarkedTipIds
         self.savedMapPointIds = savedMapPointIds
         self.toggleSavedMapPoint = toggleSavedMapPoint
+        self.toggleTaskFavorite = toggleTaskFavorite
+        self.toggleTipBookmark = toggleTipBookmark
     }
 
     func refreshSavedPlaces() {
@@ -44,6 +50,34 @@ final class FavoritesViewModel {
         let isSaved = !uiState.savedMapPointIds.contains(point.id)
         toggleSavedMapPoint.execute(pointId: point.id, isSaved: isSaved)
         uiState.savedMapPointIds = savedMapPointIds.execute()
+    }
+
+    func removeTask(_ task: EcoTask) {
+        guard let userId else {
+            return
+        }
+        uiState.favoriteTaskIds.remove(task.id)
+        Task {
+            do {
+                try await toggleTaskFavorite.execute(userId: userId, taskId: task.id, isFavorite: false)
+            } catch {
+                uiState.favoriteTaskIds.insert(task.id)
+            }
+        }
+    }
+
+    func removeTip(_ tip: EcoTip) {
+        guard let userId else {
+            return
+        }
+        uiState.bookmarkedTipIds.remove(tip.id)
+        Task {
+            do {
+                try await toggleTipBookmark.execute(userId: userId, tipId: tip.id, isBookmarked: false)
+            } catch {
+                uiState.bookmarkedTipIds.insert(tip.id)
+            }
+        }
     }
 
     func observe() async {

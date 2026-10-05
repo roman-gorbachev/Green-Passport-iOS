@@ -34,7 +34,7 @@ struct GameWebScreen: View {
                 banner
                     .padding(.horizontal, Spacing.medium)
                     .padding(.vertical, Spacing.xSmall)
-                    .glassEffect(in: .capsule)
+                    .adaptiveGlassEffect(in: .capsule)
                     .padding(.top, Spacing.xSmall)
                     .transition(.move(edge: .top).combined(with: .opacity))
             }
@@ -43,7 +43,7 @@ struct GameWebScreen: View {
         .navigationTitle(title)
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
-                Button(role: .close, action: onClose)
+                CloseButton(action: onClose)
             }
         }
         .sensoryFeedback(uiState.rewardFailure == nil ? .success : .error, trigger: uiState.rewardCount)

@@ -186,7 +186,7 @@ struct ProfileSetupScreen: View {
                 .font(.headline)
                 .frame(width: Self.topBarButtonSize, height: Self.topBarButtonSize)
         }
-        .buttonStyle(.glass)
+        .adaptiveGlassButtonStyle()
         .buttonBorderShape(.circle)
         .accessibilityLabel(Text(label))
     }

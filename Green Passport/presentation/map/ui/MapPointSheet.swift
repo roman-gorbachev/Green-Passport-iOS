@@ -39,7 +39,7 @@ struct MapPointSheet: View {
                     }
                     .frame(maxWidth: .infinity)
                 }
-                .buttonStyle(.glassProminent)
+                .adaptiveProminentGlassButtonStyle()
                 Button(action: onToggleSaved) {
                     Label {
                         Text(isSaved ? .saved : .save)
@@ -49,7 +49,7 @@ struct MapPointSheet: View {
                     }
                     .frame(maxWidth: .infinity)
                 }
-                .buttonStyle(.glass)
+                .adaptiveGlassButtonStyle()
                 .sensoryFeedback(.selection, trigger: isSaved)
             }
             .controlSize(.large)
@@ -65,7 +65,12 @@ private struct MapPointSheetPresentation: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-            .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { measured in
+            .onGeometryChange(for: CGFloat.self) { proxy in
+                return proxy.size.height
+            } action: { measured in
+                guard measured > 0 else {
+                    return
+                }
                 height = measured + MapPointSheet.bottomAllowance
             }
             .presentationDetents([.height(height)])

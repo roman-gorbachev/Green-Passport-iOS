@@ -106,16 +106,9 @@ struct EcoTipsListScreen: View {
                     .font(.footnote)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                Button {
+                FavoriteButton(isFavorite: isBookmarked) {
                     onToggleBookmark(tip)
-                } label: {
-                    Image(systemName: isBookmarked ? "heart.fill" : "heart")
-                        .foregroundStyle(isBookmarked ? Palette.forest : Palette.secondaryText)
-                        .contentTransition(.symbolEffect(.replace))
                 }
-                .buttonStyle(.borderless)
-                .accessibilityLabel(Text(.profileBookmarks))
-                .sensoryFeedback(.impact, trigger: isBookmarked)
             }
             .contentShape(.rect)
             .padding(.horizontal, Spacing.medium)

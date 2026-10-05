@@ -1,4 +1,4 @@
 protocol NotificationPermission {
-    func requestIfNeeded() async -> Bool
+    func requestIfNeeded() async -> NotificationAuthorization
     func isAuthorized() async -> Bool
 }

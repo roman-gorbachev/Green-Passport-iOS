@@ -36,7 +36,12 @@ struct HomeRoute: View {
         .eventDetailSheet(item: $selectedEvent, container: container)
         .sheet(isPresented: $isStreakSheetPresented) {
             StreakSheet(summary: Streak.summary(of: viewModel.uiState.streak, at: Date()))
-                .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { height in
+                .onGeometryChange(for: CGFloat.self) { proxy in
+                    return proxy.size.height
+                } action: { height in
+                    guard height > 0 else {
+                        return
+                    }
                     streakSheetHeight = height + Self.streakSheetBottomAllowance
                 }
                 .presentationDetents([.height(streakSheetHeight)])

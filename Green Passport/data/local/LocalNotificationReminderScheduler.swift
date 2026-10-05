@@ -6,6 +6,7 @@ final class LocalNotificationReminderScheduler: ReminderScheduler {
     private static let couponIdentifierPrefix = "coupon_expiring_"
     private static let streakIdentifier = "streak_reminder"
     private static let couponReminderLeadTime: TimeInterval = 24 * 60 * 60
+    private static let minimumTriggerDelay: TimeInterval = 1
 
     private let settingsRepository: SettingsRepository
     private let notificationLogRepository: NotificationLogRepository
@@ -29,7 +30,7 @@ final class LocalNotificationReminderScheduler: ReminderScheduler {
             identifier: Self.identifierPrefix + eventId,
             title: String(localized: .eventReminderTitle),
             body: title,
-            at: max(date, Date())
+            at: date
         )
     }
 
@@ -63,23 +64,35 @@ final class LocalNotificationReminderScheduler: ReminderScheduler {
         center.removePendingNotificationRequests(withIdentifiers: [Self.streakIdentifier])
     }
 
-    private func schedule(identifier: String, title: String, body: String, at fireDate: Date) async {
-        notificationLogRepository.log(title: title, body: body, sentAt: fireDate)
-        await deliver(identifier: identifier, title: title, body: body, at: fireDate)
+    func cancelAllReminders() {
+        center.removeAllPendingNotificationRequests()
     }
 
-    private func deliver(identifier: String, title: String, body: String, at fireDate: Date) async {
-        guard settingsRepository.isNotificationsEnabled, await notificationPermission.requestIfNeeded() else {
+    private func schedule(identifier: String, title: String, body: String, at fireDate: Date) async {
+        guard await deliver(identifier: identifier, title: title, body: body, at: fireDate) else {
             return
+        }
+        notificationLogRepository.log(title: title, body: body, sentAt: max(fireDate, Date()))
+    }
+
+    @discardableResult
+    private func deliver(identifier: String, title: String, body: String, at fireDate: Date) async -> Bool {
+        guard settingsRepository.isNotificationsEnabled, await notificationPermission.requestIfNeeded() == .authorized else {
+            return false
         }
         let content = UNMutableNotificationContent()
         content.title = title
         content.body = body
         content.sound = .default
-        let components = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: fireDate)
-        let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
+        let delay = max(fireDate.timeIntervalSinceNow, Self.minimumTriggerDelay)
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: delay, repeats: false)
         let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
-        try? await center.add(request)
+        do {
+            try await center.add(request)
+            return true
+        } catch {
+            return false
+        }
     }
 
     func cancelEventReminder(eventId: String) {

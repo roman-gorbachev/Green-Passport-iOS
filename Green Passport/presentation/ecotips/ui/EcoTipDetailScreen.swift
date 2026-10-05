@@ -6,6 +6,7 @@ struct EcoTipDetailScreen: View {
 
     let uiState: EcoTipDetailUiState
     let onMarkRead: () -> Void
+    let onToggleBookmark: () -> Void
     let onRetry: () -> Void
 
     var body: some View {
@@ -21,6 +22,13 @@ struct EcoTipDetailScreen: View {
         .background(Palette.screenBackground)
         .navigationTitle(Text(.ecotipDetailTitle))
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            if uiState.tip != nil {
+                ToolbarItem(placement: .topBarTrailing) {
+                    FavoriteButton(isFavorite: uiState.isBookmarked, action: onToggleBookmark)
+                }
+            }
+        }
         .sensoryFeedback(.success, trigger: uiState.isRead) { _, isRead in
             return isRead
         }
@@ -38,7 +46,7 @@ struct EcoTipDetailScreen: View {
                 .font(.headline)
                 .frame(maxWidth: .infinity)
             }
-            .buttonStyle(.glass)
+            .adaptiveGlassButtonStyle()
             .controlSize(.large)
         } else {
             Link(destination: url) {
@@ -122,6 +130,7 @@ struct EcoTipDetailScreen: View {
                 isLoading: false
             ),
             onMarkRead: {},
+            onToggleBookmark: {},
             onRetry: {}
         )
     }

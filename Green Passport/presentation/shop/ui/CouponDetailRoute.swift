@@ -13,7 +13,7 @@ struct CouponDetailRoute: View {
             CouponDetailScreen(uiState: viewModel.uiState, onMarkUsed: viewModel.markUsed)
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
-                        Button(role: .close) {
+                        CloseButton {
                             dismiss()
                         }
                     }

@@ -1,4 +1,3 @@
-import MapKit
 import SwiftUI
 
 struct MapRoute: View {
@@ -27,7 +26,7 @@ struct MapRoute: View {
                         point: point,
                         isSaved: viewModel.uiState.savedPointIds.contains(point.id),
                         onToggleSaved: { viewModel.toggleSaved(point) },
-                        onRoute: { openDirections(to: point) }
+                        onRoute: { point.openDirections() }
                     )
                 }
             }
@@ -48,12 +47,5 @@ struct MapRoute: View {
                 }
             }
         )
-    }
-
-    private func openDirections(to point: MapPoint) {
-        let location = CLLocation(latitude: point.latitude, longitude: point.longitude)
-        let item = MKMapItem(location: location, address: nil)
-        item.name = point.name
-        item.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDefault])
     }
 }

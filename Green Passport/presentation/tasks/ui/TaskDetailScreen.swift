@@ -2,11 +2,13 @@ import SwiftUI
 
 struct TaskDetailScreen: View {
     private static let mascotSize: CGFloat = 64
+    private static let imageAspectRatio: CGFloat = 1.5
     private static let unsafePhotoReason = "unsafe_photo"
     private static let invalidPhotoReason = "invalid_photo"
 
     let uiState: TaskDetailUiState
     let onConfirm: () -> Void
+    let onToggleFavorite: () -> Void
     let onRetry: () -> Void
 
     var body: some View {
@@ -29,7 +31,15 @@ struct TaskDetailScreen: View {
         return VStack(spacing: 0) {
             ScrollView {
                 VStack(alignment: .leading, spacing: Spacing.large) {
-                    HStack(spacing: Spacing.medium) {
+                    if let imageUrl = task.imageUrl.flatMap(URL.init(string:)) {
+                        Color.clear
+                            .aspectRatio(Self.imageAspectRatio, contentMode: .fit)
+                            .overlay {
+                                RemoteImage(url: imageUrl)
+                            }
+                            .clipShape(.rect(cornerRadius: CornerRadius.large, style: .continuous))
+                    }
+                    HStack(alignment: .top, spacing: Spacing.medium) {
                         MascotImage(size: Self.mascotSize)
                         VStack(alignment: .leading, spacing: Spacing.xSmall) {
                             Text(task.title)
@@ -45,6 +55,9 @@ struct TaskDetailScreen: View {
                                 .foregroundStyle(Palette.secondaryText)
                             }
                         }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        FavoriteButton(isFavorite: uiState.isFavorite, action: onToggleFavorite)
+                            .font(.title2)
                     }
                     Text(task.description)
                         .font(.body)
@@ -54,21 +67,13 @@ struct TaskDetailScreen: View {
                 .padding(.horizontal, Spacing.screenHorizontal)
                 .padding(.top, Spacing.screenHorizontal)
                 .padding(.bottom, Spacing.small)
-                .background {
-                    GeometryReader { proxy in
-                        Color.clear.preference(key: ContentHeightPreferenceKey.self, value: proxy.size.height)
-                    }
-                }
+                .reportsSheetContentHeight()
             }
             .scrollBounceBehavior(.basedOnSize)
             confirmation(task: task)
                 .padding(.horizontal, Spacing.screenHorizontal)
                 .padding(.bottom, Spacing.medium)
-                .background {
-                    GeometryReader { proxy in
-                        Color.clear.preference(key: ContentHeightPreferenceKey.self, value: proxy.size.height)
-                    }
-                }
+                .reportsSheetContentHeight()
         }
     }
 
@@ -131,6 +136,7 @@ struct TaskDetailScreen: View {
     TaskDetailScreen(
         uiState: TaskDetailUiState(task: EcoTask.placeholders(count: 1).first, isLoading: false),
         onConfirm: {},
+        onToggleFavorite: {},
         onRetry: {}
     )
 }

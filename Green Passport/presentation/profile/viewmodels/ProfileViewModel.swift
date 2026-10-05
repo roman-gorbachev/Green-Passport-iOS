@@ -15,6 +15,7 @@ final class ProfileViewModel {
     @ObservationIgnored private var session: AuthSession?
 
     private(set) var uiState = ProfileUiState()
+    private(set) var notificationSettingsRequests = 0
 
     init(
         observeSession: ObserveSessionUseCase,
@@ -40,7 +41,7 @@ final class ProfileViewModel {
     }
 
     func observe() async {
-        uiState.notificationsEnabled = await notificationPermission.isAuthorized() && isNotificationsEnabled.execute()
+        await refreshNotifications()
         for await session in observeSession.execute() {
             guard let session else {
                 continue
@@ -64,8 +65,16 @@ final class ProfileViewModel {
 
     func toggleNotifications(_ isEnabled: Bool) {
         Task {
-            uiState.notificationsEnabled = await setNotificationsEnabled.execute(isEnabled: isEnabled)
+            let authorization = await setNotificationsEnabled.execute(isEnabled: isEnabled)
+            uiState.notificationsEnabled = isEnabled && authorization == .authorized
+            if isEnabled && authorization == .denied {
+                notificationSettingsRequests += 1
+            }
         }
+    }
+
+    func refreshNotifications() async {
+        uiState.notificationsEnabled = await notificationPermission.isAuthorized() && isNotificationsEnabled.execute()
     }
 
     func selectTheme(_ theme: AppTheme) {

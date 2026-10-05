@@ -161,7 +161,9 @@ extension AppDIContainer {
                 userProfileRepository: userProfileRepository,
                 taskSubmissionsRepository: taskSubmissionsRepository
             ),
-            observeTaskSubmissions: observeTaskSubmissionsUseCase
+            observeTaskSubmissions: observeTaskSubmissionsUseCase,
+            observeFavoriteTaskIds: ObserveFavoriteTaskIdsUseCase(favoritesRepository: favoritesRepository),
+            toggleTaskFavorite: ToggleTaskFavoriteUseCase(favoritesRepository: favoritesRepository)
         )
     }
 
@@ -225,7 +227,11 @@ extension AppDIContainer {
     }
 
     func buildCalendarViewModel() -> CalendarViewModel {
-        return CalendarViewModel(observeEvents: observeEventsUseCase)
+        return CalendarViewModel(
+            observeSession: observeSessionUseCase,
+            observeEvents: observeEventsUseCase,
+            observeRegisteredEventIds: ObserveRegisteredEventIdsUseCase(eventsRepository: eventsRepository)
+        )
     }
 
     func buildMapViewModel() -> MapViewModel {
@@ -250,7 +256,9 @@ extension AppDIContainer {
             observeFavoriteTaskIds: ObserveFavoriteTaskIdsUseCase(favoritesRepository: favoritesRepository),
             observeBookmarkedTipIds: ObserveBookmarkedTipIdsUseCase(favoritesRepository: favoritesRepository),
             savedMapPointIds: SavedMapPointIdsUseCase(savedMapPointsRepository: savedMapPointsRepository),
-            toggleSavedMapPoint: ToggleSavedMapPointUseCase(savedMapPointsRepository: savedMapPointsRepository)
+            toggleSavedMapPoint: ToggleSavedMapPointUseCase(savedMapPointsRepository: savedMapPointsRepository),
+            toggleTaskFavorite: ToggleTaskFavoriteUseCase(favoritesRepository: favoritesRepository),
+            toggleTipBookmark: ToggleTipBookmarkUseCase(favoritesRepository: favoritesRepository)
         )
     }
 }
@@ -312,7 +320,9 @@ extension AppDIContainer {
             observeSession: observeSessionUseCase,
             observeEcoTips: ObserveEcoTipsUseCase(ecoTipsRepository: ecoTipsRepository, includesArchived: true),
             observeReadTipIds: observeReadTipIdsUseCase,
-            markTipRead: MarkTipReadUseCase(rewardsRepository: rewardsRepository)
+            markTipRead: MarkTipReadUseCase(rewardsRepository: rewardsRepository),
+            observeBookmarkedTipIds: ObserveBookmarkedTipIdsUseCase(favoritesRepository: favoritesRepository),
+            toggleTipBookmark: ToggleTipBookmarkUseCase(favoritesRepository: favoritesRepository)
         )
     }
 

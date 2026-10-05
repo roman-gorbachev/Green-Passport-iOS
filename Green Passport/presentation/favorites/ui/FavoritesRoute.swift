@@ -1,4 +1,3 @@
-import MapKit
 import SwiftUI
 
 struct FavoritesRoute: View {
@@ -19,10 +18,7 @@ struct FavoritesRoute: View {
         FavoritesScreen(
             uiState: viewModel.uiState,
             segment: $segment,
-            onTask: { selectedTask = TaskSheetItem(id: $0.id) },
-            onTip: { router.push(.ecoTipDetail(tipId: $0.id)) },
-            onPlace: { selectedPlaceId = $0.id },
-            onRetry: viewModel.retry
+            onAction: handle
         )
         .task {
             await viewModel.observe()
@@ -36,7 +32,7 @@ struct FavoritesRoute: View {
                 point: point,
                 isSaved: viewModel.uiState.savedMapPointIds.contains(point.id),
                 onToggleSaved: { viewModel.toggleSavedPlace(point) },
-                onRoute: { openDirections(to: point) }
+                onRoute: { point.openDirections() }
             )
             .mapPointSheetPresentation()
         }
@@ -44,15 +40,27 @@ struct FavoritesRoute: View {
 
     private var selectedPlace: Binding<MapPoint?> {
         return Binding(
-            get: { return viewModel.uiState.savedPlaces.first { return $0.id == selectedPlaceId } },
+            get: { return viewModel.uiState.mapPoints.first { return $0.id == selectedPlaceId } },
             set: { selectedPlaceId = $0?.id }
         )
     }
 
-    private func openDirections(to point: MapPoint) {
-        let location = CLLocation(latitude: point.latitude, longitude: point.longitude)
-        let item = MKMapItem(location: location, address: nil)
-        item.name = point.name
-        item.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDefault])
+    private func handle(_ action: FavoritesUserAction) {
+        switch action {
+        case .taskSelected(let task):
+            selectedTask = TaskSheetItem(id: task.id)
+        case .tipSelected(let tip):
+            router.push(.ecoTipDetail(tipId: tip.id))
+        case .placeSelected(let point):
+            selectedPlaceId = point.id
+        case .taskRemoved(let task):
+            viewModel.removeTask(task)
+        case .tipRemoved(let tip):
+            viewModel.removeTip(tip)
+        case .placeRemoved(let point):
+            viewModel.toggleSavedPlace(point)
+        case .retry:
+            viewModel.retry()
+        }
     }
 }

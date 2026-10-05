@@ -14,15 +14,15 @@ struct QrScannerScreen: View {
                     .font(.headline)
                     .multilineTextAlignment(.center)
                     .padding(Spacing.medium)
-                    .glassEffect(in: .rect(cornerRadius: CornerRadius.large))
+                    .adaptiveGlassEffect(in: .rect(cornerRadius: CornerRadius.large))
                     .padding(Spacing.large)
             } else {
                 StateView(kind: .empty(message: .qrScannerUnavailableMsg))
             }
         }
         .overlay(alignment: .topTrailing) {
-            Button(role: .close, action: onClose)
-                .buttonStyle(.glass)
+            CloseButton(action: onClose)
+                .adaptiveGlassButtonStyle()
                 .padding(Spacing.medium)
         }
     }

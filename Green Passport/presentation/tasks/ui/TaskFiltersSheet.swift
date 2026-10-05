@@ -105,7 +105,7 @@ struct TaskFiltersSheet: View {
                     .disabled(draft == TaskFilters())
                 }
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button(role: .close) {
+                    CloseButton {
                         dismiss()
                     }
                 }

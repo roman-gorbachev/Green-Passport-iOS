@@ -14,6 +14,7 @@ struct CalendarRoute: View {
     var body: some View {
         CalendarScreen(
             uiState: viewModel.uiState,
+            registeredEventIds: viewModel.registeredEventIds,
             selectedDay: viewModel.selectedDay,
             onSelectDay: viewModel.selectDay,
             onEvent: { selectedEvent = EventSheetItem(id: $0.id) },

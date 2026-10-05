@@ -110,16 +110,9 @@ struct TasksListScreen: View {
                 if !isCompleted {
                     PointsBadge(points: task.rewardPoints)
                 }
-                Button {
+                FavoriteButton(isFavorite: isFavorite) {
                     onAction(.favoriteToggled(task))
-                } label: {
-                    Image(systemName: isFavorite ? "heart.fill" : "heart")
-                        .foregroundStyle(isFavorite ? Palette.forest : Palette.secondaryText)
-                        .contentTransition(.symbolEffect(.replace))
                 }
-                .buttonStyle(.borderless)
-                .accessibilityLabel(Text(.profileFavorites))
-                .sensoryFeedback(.impact, trigger: isFavorite)
             }
         }
         .buttonStyle(.plain)

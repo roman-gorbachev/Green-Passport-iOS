@@ -33,7 +33,7 @@ The UX is shared with Android through [`claude/ux-spec.ru.md`](claude/ux-spec.ru
 
 ## Building
 
-You need Xcode 26 and the iOS 26.5 SDK. Dependencies are resolved by Swift Package Manager when the project opens.
+You need Xcode 26 and the iOS 26.5 SDK; the app runs on iOS 18 and later. Dependencies are resolved by Swift Package Manager when the project opens.
 
 ```bash
 xcodebuild -project "Green Passport.xcodeproj" -scheme "Green Passport" \

@@ -2,7 +2,7 @@ import SwiftUI
 import UIKit
 
 struct EventCalendarView: UIViewRepresentable {
-    let eventCounts: [DateComponents: Int]
+    let dayCounts: [DateComponents: DayEventCounts]
     let selectedDay: DateComponents
     let onSelectDay: (DateComponents) -> Void
 
@@ -20,11 +20,11 @@ struct EventCalendarView: UIViewRepresentable {
     }
 
     func updateUIView(_ calendarView: UICalendarView, context: Context) {
-        let previousCounts = context.coordinator.eventCounts
+        let previousCounts = context.coordinator.dayCounts
         context.coordinator.parent = self
-        context.coordinator.eventCounts = eventCounts
-        let changedDays = Set(previousCounts.keys).union(eventCounts.keys).filter { day in
-            return previousCounts[day] != eventCounts[day]
+        context.coordinator.dayCounts = dayCounts
+        let changedDays = Set(previousCounts.keys).union(dayCounts.keys).filter { day in
+            return previousCounts[day] != dayCounts[day]
         }
         if !changedDays.isEmpty {
             calendarView.reloadDecorations(forDateComponents: Array(changedDays), animated: true)
@@ -53,19 +53,19 @@ struct EventCalendarView: UIViewRepresentable {
 
     final class Coordinator: NSObject, UICalendarViewDelegate, UICalendarSelectionSingleDateDelegate {
         var parent: EventCalendarView
-        var eventCounts: [DateComponents: Int]
+        var dayCounts: [DateComponents: DayEventCounts]
 
         init(parent: EventCalendarView) {
             self.parent = parent
-            self.eventCounts = parent.eventCounts
+            self.dayCounts = parent.dayCounts
         }
 
         func calendarView(_ calendarView: UICalendarView, decorationFor dateComponents: DateComponents) -> UICalendarView.Decoration? {
-            guard let count = eventCounts[dateComponents.dayOnly] else {
+            guard let counts = dayCounts[dateComponents.dayOnly] else {
                 return nil
             }
             return .customView {
-                return EventCountBadge.make(count: count)
+                return EventCountBadge.make(counts: counts)
             }
         }
 

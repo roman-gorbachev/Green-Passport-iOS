@@ -28,7 +28,7 @@ struct GroupMembersSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button(role: .close) {
+                    CloseButton {
                         dismiss()
                     }
                 }

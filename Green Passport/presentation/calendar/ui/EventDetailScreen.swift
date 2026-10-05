@@ -25,9 +25,6 @@ struct EventDetailScreen: View {
         .sensoryFeedback(.success, trigger: uiState.isCheckedIn) { _, isCheckedIn in
             return isCheckedIn
         }
-        .sensoryFeedback(.success, trigger: uiState.isCheckedIn) { _, isCheckedIn in
-            return isCheckedIn
-        }
     }
 
     private func content(event: EcoEvent) -> some View {
@@ -61,6 +58,7 @@ struct EventDetailScreen: View {
                     .foregroundStyle(Palette.secondaryText)
             }
             .padding(Spacing.screenHorizontal)
+            .reportsSheetContentHeight()
         }
         .safeAreaInset(edge: .bottom) {
             Group {
@@ -101,6 +99,7 @@ struct EventDetailScreen: View {
             }
             .padding(.horizontal, Spacing.screenHorizontal)
             .padding(.bottom, Spacing.medium)
+            .reportsSheetContentHeight()
         }
     }
 

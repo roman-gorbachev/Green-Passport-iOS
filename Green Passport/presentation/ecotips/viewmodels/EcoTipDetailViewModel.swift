@@ -7,6 +7,8 @@ final class EcoTipDetailViewModel {
     @ObservationIgnored private let observeEcoTips: ObserveEcoTipsUseCase
     @ObservationIgnored private let observeReadTipIds: ObserveReadTipIdsUseCase
     @ObservationIgnored private let markTipRead: MarkTipReadUseCase
+    @ObservationIgnored private let observeBookmarkedTipIds: ObserveBookmarkedTipIdsUseCase
+    @ObservationIgnored private let toggleTipBookmark: ToggleTipBookmarkUseCase
     @ObservationIgnored private let sessionTask = LatestTask()
     @ObservationIgnored private var userId: String?
 
@@ -17,13 +19,17 @@ final class EcoTipDetailViewModel {
         observeSession: ObserveSessionUseCase,
         observeEcoTips: ObserveEcoTipsUseCase,
         observeReadTipIds: ObserveReadTipIdsUseCase,
-        markTipRead: MarkTipReadUseCase
+        markTipRead: MarkTipReadUseCase,
+        observeBookmarkedTipIds: ObserveBookmarkedTipIdsUseCase,
+        toggleTipBookmark: ToggleTipBookmarkUseCase
     ) {
         self.tipId = tipId
         self.observeSession = observeSession
         self.observeEcoTips = observeEcoTips
         self.observeReadTipIds = observeReadTipIds
         self.markTipRead = markTipRead
+        self.observeBookmarkedTipIds = observeBookmarkedTipIds
+        self.toggleTipBookmark = toggleTipBookmark
     }
 
     func observe() async {
@@ -58,6 +64,21 @@ final class EcoTipDetailViewModel {
         }
     }
 
+    func toggleBookmark() {
+        guard let userId else {
+            return
+        }
+        let isBookmarked = !uiState.isBookmarked
+        uiState.isBookmarked = isBookmarked
+        Task {
+            do {
+                try await toggleTipBookmark.execute(userId: userId, tipId: tipId, isBookmarked: isBookmarked)
+            } catch {
+                uiState.isBookmarked = !isBookmarked
+            }
+        }
+    }
+
     private func start(userId: String?) {
         sessionTask.run { [weak self] in
             await self?.observeData(userId: userId)
@@ -72,6 +93,7 @@ final class EcoTipDetailViewModel {
         await withTaskGroup(of: Void.self) { group in
             group.addTask { await self.observeTip() }
             group.addTask { await self.observeReadState(userId: userId) }
+            group.addTask { await self.observeBookmark(userId: userId) }
         }
     }
 
@@ -89,6 +111,16 @@ final class EcoTipDetailViewModel {
             }
             uiState.isLoading = false
             uiState.hasError = uiState.tip == nil
+        }
+    }
+
+    private func observeBookmark(userId: String) async {
+        do {
+            for try await bookmarkedIds in observeBookmarkedTipIds.execute(userId: userId) {
+                uiState.isBookmarked = bookmarkedIds.contains(tipId)
+            }
+        } catch {
+            return
         }
     }
 

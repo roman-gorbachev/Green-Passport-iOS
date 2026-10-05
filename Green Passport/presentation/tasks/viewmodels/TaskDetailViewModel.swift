@@ -11,6 +11,8 @@ final class TaskDetailViewModel {
     @ObservationIgnored private let redeemTaskCode: RedeemTaskCodeUseCase
     @ObservationIgnored private let submitTaskPhoto: SubmitTaskPhotoUseCase
     @ObservationIgnored private let observeTaskSubmissions: ObserveTaskSubmissionsUseCase
+    @ObservationIgnored private let observeFavoriteTaskIds: ObserveFavoriteTaskIdsUseCase
+    @ObservationIgnored private let toggleTaskFavorite: ToggleTaskFavoriteUseCase
     @ObservationIgnored private let sessionTask = LatestTask()
     @ObservationIgnored private var userId: String?
 
@@ -24,7 +26,9 @@ final class TaskDetailViewModel {
         completeSelfTask: CompleteSelfTaskUseCase,
         redeemTaskCode: RedeemTaskCodeUseCase,
         submitTaskPhoto: SubmitTaskPhotoUseCase,
-        observeTaskSubmissions: ObserveTaskSubmissionsUseCase
+        observeTaskSubmissions: ObserveTaskSubmissionsUseCase,
+        observeFavoriteTaskIds: ObserveFavoriteTaskIdsUseCase,
+        toggleTaskFavorite: ToggleTaskFavoriteUseCase
     ) {
         self.taskId = taskId
         self.observeSession = observeSession
@@ -34,6 +38,8 @@ final class TaskDetailViewModel {
         self.redeemTaskCode = redeemTaskCode
         self.submitTaskPhoto = submitTaskPhoto
         self.observeTaskSubmissions = observeTaskSubmissions
+        self.observeFavoriteTaskIds = observeFavoriteTaskIds
+        self.toggleTaskFavorite = toggleTaskFavorite
     }
 
     func observe() async {
@@ -59,6 +65,21 @@ final class TaskDetailViewModel {
     func redeemCode(_ code: String) {
         runRewardAction {
             return try await self.redeemTaskCode.execute(code: code)
+        }
+    }
+
+    func toggleFavorite() {
+        guard let userId else {
+            return
+        }
+        let isFavorite = !uiState.isFavorite
+        uiState.isFavorite = isFavorite
+        Task {
+            do {
+                try await toggleTaskFavorite.execute(userId: userId, taskId: taskId, isFavorite: isFavorite)
+            } catch {
+                uiState.isFavorite = !isFavorite
+            }
         }
     }
 
@@ -132,6 +153,7 @@ final class TaskDetailViewModel {
             group.addTask { await self.observeTaskDocument() }
             group.addTask { await self.observeCompletion(userId: userId) }
             group.addTask { await self.observeSubmissions(userId: userId) }
+            group.addTask { await self.observeFavorite(userId: userId) }
         }
     }
 
@@ -148,6 +170,16 @@ final class TaskDetailViewModel {
             }
             uiState.isLoading = false
             uiState.hasError = uiState.task == nil
+        }
+    }
+
+    private func observeFavorite(userId: String) async {
+        do {
+            for try await favoriteIds in observeFavoriteTaskIds.execute(userId: userId) {
+                uiState.isFavorite = favoriteIds.contains(taskId)
+            }
+        } catch {
+            return
         }
     }
 

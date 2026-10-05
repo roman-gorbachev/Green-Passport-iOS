@@ -22,13 +22,13 @@ struct MessageComposer: View {
                     .lineLimit(Self.lineLimit)
                     .padding(.horizontal, Spacing.medium)
                     .padding(.vertical, Spacing.small)
-                    .glassEffect(in: .rect(cornerRadius: CornerRadius.large))
+                    .adaptiveGlassEffect(in: .rect(cornerRadius: CornerRadius.large))
                 Button(action: onSend) {
                     Image(systemName: "arrow.up")
                         .font(.headline)
                         .loadingOverlay(isSending, tint: Palette.onForest)
                 }
-                .buttonStyle(.glassProminent)
+                .adaptiveProminentGlassButtonStyle()
                 .buttonBorderShape(.circle)
                 .controlSize(.large)
                 .disabled(draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || isSending)

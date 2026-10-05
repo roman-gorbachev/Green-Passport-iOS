@@ -74,7 +74,7 @@ struct MapScreen: View {
             }
             .padding(.horizontal, Spacing.medium)
             .padding(.vertical, Spacing.small)
-            .glassEffect(in: .capsule)
+            .adaptiveGlassEffect(in: .capsule)
             .padding(.horizontal, Spacing.screenHorizontal)
             FilterBar(options: MapFilter.allFilters, selected: uiState.filter, title: { return $0.title }, onSelect: onFilter)
             if !uiState.isLoading && !uiState.hasError && uiState.visiblePoints.isEmpty {
@@ -82,7 +82,7 @@ struct MapScreen: View {
                     .font(.subheadline.weight(.medium))
                     .padding(.horizontal, Spacing.medium)
                     .padding(.vertical, Spacing.xSmall)
-                    .glassEffect(in: .capsule)
+                    .adaptiveGlassEffect(in: .capsule)
             }
         }
     }

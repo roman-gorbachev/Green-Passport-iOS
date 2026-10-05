@@ -2,7 +2,7 @@ import AuthenticationServices
 import SwiftUI
 
 struct AuthScreen: View {
-    private static let isAppleSignInAvailable = false // включить, когда будет оформлен платный Apple Developer Program
+    private static let isAppleSignInAvailable = false
     private static let mascotSize: CGFloat = 120
     private static let registerStepCount = 5
     private static let socialButtonHeight: CGFloat = 50

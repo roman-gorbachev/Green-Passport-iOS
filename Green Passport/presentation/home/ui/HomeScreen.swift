@@ -7,6 +7,7 @@ struct HomeScreen: View {
     private static let taskMascotSize: CGFloat = 34
     private static let placeholderTaskCount = 3
     private static let labelMinimumScale: CGFloat = 0.8
+    private static let quickActionLineLimit = 2
 
     let uiState: HomeUiState
     let onProfile: () -> Void
@@ -85,7 +86,7 @@ struct HomeScreen: View {
                         Text(action.title)
                             .font(.caption2.weight(.medium))
                             .foregroundStyle(Color.primary)
-                            .lineLimit(2)
+                            .lineLimit(Self.quickActionLineLimit)
                             .multilineTextAlignment(.center)
                     }
                     .frame(maxWidth: .infinity)

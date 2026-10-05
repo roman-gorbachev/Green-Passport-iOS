@@ -1,35 +1,26 @@
 import PhotosUI
 import SwiftUI
-import UIKit
 
 struct TaskDetailRoute: View {
-    private static let minSheetHeight: CGFloat = 200
-    private static let sheetChromeHeight: CGFloat = 32
-
     @State private var viewModel: TaskDetailViewModel
     @State private var isPhotoSourcePresented = false
     @State private var isLibraryPresented = false
     @State private var isCameraPresented = false
     @State private var isScannerPresented = false
     @State private var libraryItem: PhotosPickerItem?
-    @State private var measuredContentHeight: CGFloat = 0
 
     init(taskId: String, container: AppDIContainer) {
         _viewModel = State(initialValue: container.buildTaskDetailViewModel(taskId: taskId))
     }
 
     var body: some View {
-        NavigationStack {
-            TaskDetailScreen(
-                uiState: viewModel.uiState,
-                onConfirm: confirm,
-                onRetry: viewModel.retry
-            )
-            .toolbar(.hidden, for: .navigationBar)
-        }
-        .onPreferenceChange(ContentHeightPreferenceKey.self) { measuredContentHeight = $0 }
-        .presentationDetents([.height(sheetHeight)])
-        .presentationDragIndicator(.visible)
+        TaskDetailScreen(
+            uiState: viewModel.uiState,
+            onConfirm: confirm,
+            onToggleFavorite: viewModel.toggleFavorite,
+            onRetry: viewModel.retry
+        )
+        .fittedSheetDetent()
         .task {
             await viewModel.observe()
         }
@@ -72,10 +63,6 @@ struct TaskDetailRoute: View {
                 onClose: { isScannerPresented = false }
             )
         }
-    }
-
-    private var sheetHeight: CGFloat {
-        return max(measuredContentHeight + Self.sheetChromeHeight, Self.minSheetHeight)
     }
 
     private func confirm() {

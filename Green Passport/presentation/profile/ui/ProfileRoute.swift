@@ -5,6 +5,7 @@ struct ProfileRoute: View {
 
     @Environment(TabRouter.self) private var router
     @Environment(\.openURL) private var openURL
+    @Environment(\.scenePhase) private var scenePhase
     @State private var viewModel: ProfileViewModel
     @State private var isEditingProfile = false
 
@@ -17,6 +18,19 @@ struct ProfileRoute: View {
         ProfileScreen(uiState: viewModel.uiState, languageName: AppLanguage.currentName, onAction: handle)
             .task {
                 await viewModel.observe()
+            }
+            .onChange(of: viewModel.notificationSettingsRequests) {
+                if let url = URL(string: UIApplication.openNotificationSettingsURLString) {
+                    openURL(url)
+                }
+            }
+            .onChange(of: scenePhase) { _, phase in
+                guard phase == .active else {
+                    return
+                }
+                Task {
+                    await viewModel.refreshNotifications()
+                }
             }
             .fullScreenCover(isPresented: $isEditingProfile) {
                 ProfileSetupRoute(container: container, isEditing: true) {

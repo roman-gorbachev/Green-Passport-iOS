@@ -13,7 +13,7 @@ struct AppButton: View {
                 .loadingOverlay(isLoading, tint: Palette.onForest)
                 .frame(maxWidth: .infinity)
         }
-        .buttonStyle(.glassProminent)
+        .adaptiveProminentGlassButtonStyle()
         .controlSize(.large)
         .disabled(!isEnabled || isLoading)
     }

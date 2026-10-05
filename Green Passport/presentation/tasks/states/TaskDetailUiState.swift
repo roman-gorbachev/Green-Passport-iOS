@@ -1,6 +1,7 @@
 struct TaskDetailUiState {
     var task: EcoTask?
     var isCompleted = false
+    var isFavorite = false
     var submission: TaskSubmission?
     var isLoading = true
     var isSubmitting = false

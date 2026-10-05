@@ -7,16 +7,16 @@ final class UserNotificationPermission: NotificationPermission {
         self.center = center
     }
 
-    func requestIfNeeded() async -> Bool {
+    func requestIfNeeded() async -> NotificationAuthorization {
         let settings = await center.notificationSettings()
         switch settings.authorizationStatus {
         case .authorized, .provisional, .ephemeral:
-            return true
+            return .authorized
         case .notDetermined:
-            let granted = try? await center.requestAuthorization(options: [.alert, .sound, .badge])
-            return granted ?? false
+            let isGranted = try? await center.requestAuthorization(options: [.alert, .sound, .badge])
+            return isGranted == true ? .authorized : .denied
         default:
-            return false
+            return .denied
         }
     }
 

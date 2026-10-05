@@ -9,14 +9,14 @@ final class SetNotificationsEnabledUseCase {
         self.reminderScheduler = reminderScheduler
     }
 
-    func execute(isEnabled: Bool) async -> Bool {
+    func execute(isEnabled: Bool) async -> NotificationAuthorization {
         guard isEnabled else {
             settingsRepository.setNotificationsEnabled(false)
-            reminderScheduler.cancelStreakReminder()
-            return false
+            reminderScheduler.cancelAllReminders()
+            return await notificationPermission.isAuthorized() ? .authorized : .denied
         }
-        let isGranted = await notificationPermission.requestIfNeeded()
-        settingsRepository.setNotificationsEnabled(isGranted)
-        return isGranted
+        let authorization = await notificationPermission.requestIfNeeded()
+        settingsRepository.setNotificationsEnabled(authorization == .authorized)
+        return authorization
     }
 }

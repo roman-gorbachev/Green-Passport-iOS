@@ -8,6 +8,7 @@ struct ProgressHeroCard: View {
     private static let captionOpacity: Double = 0.8
     private static let bubbleMaxWidth: CGFloat = 132
     private static let bubbleMinimumScale: CGFloat = 0.8
+    private static let pointsMinimumScale: CGFloat = 0.5
 
     let points: Int
     var level: Level?
@@ -43,11 +44,13 @@ struct ProgressHeroCard: View {
                     Text(.pointsCount(points))
                         .contentTransition(.numericText(value: Double(points)))
                 } icon: {
-                    Image(systemName: "star.fill")
+                    Image(systemName: "bolt.fill")
                         .foregroundStyle(Palette.lime)
                 }
                 .font(.title.bold())
                 .foregroundStyle(Palette.onForest)
+                .lineLimit(1)
+                .minimumScaleFactor(Self.pointsMinimumScale)
                 if let level {
                     progressBar(level: level)
                         .padding(.top, Spacing.small)
@@ -121,6 +124,7 @@ struct ProgressHeroCard: View {
     VStack {
         ProgressHeroCard(points: 500, level: Level(lifetimeXp: 2800), streakDays: 5)
         ProgressHeroCard(points: 12500, level: Level(lifetimeXp: 98000), streakDays: 125)
+        ProgressHeroCard(points: 1_250_000, level: Level(lifetimeXp: 980_000), streakDays: 365)
         ProgressHeroCard(points: 120)
     }
     .padding()

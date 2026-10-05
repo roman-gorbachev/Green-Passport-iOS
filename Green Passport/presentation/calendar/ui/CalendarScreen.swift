@@ -5,6 +5,7 @@ struct CalendarScreen: View {
     private static let dayTitleAnchorId = "dayTitle"
 
     let uiState: ListUiState<EcoEvent>
+    let registeredEventIds: Set<String>
     let selectedDay: DateComponents
     let onSelectDay: (DateComponents) -> Void
     let onEvent: (EcoEvent) -> Void
@@ -33,7 +34,7 @@ struct CalendarScreen: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: Spacing.medium) {
                     EventCalendarView(
-                        eventCounts: Dictionary(grouping: events, by: \.day).mapValues(\.count),
+                        dayCounts: DayEventCounts.byDay(events: events, registeredIds: registeredEventIds),
                         selectedDay: selectedDay,
                         onSelectDay: onSelectDay
                     )
@@ -85,6 +86,7 @@ struct CalendarScreen: View {
             uiState: .success(data: [
                 EcoEvent(id: "1", title: "Субботник в парке", description: "", location: "Парк Горького", city: "Минск", startAt: .now, imageUrl: nil, rewardPoints: 50),
             ]),
+            registeredEventIds: ["1"],
             selectedDay: DateComponents.day(containing: .now),
             onSelectDay: { _ in },
             onEvent: { _ in },

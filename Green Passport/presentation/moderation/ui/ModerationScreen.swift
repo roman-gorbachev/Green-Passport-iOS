@@ -99,7 +99,7 @@ struct ModerationScreen: View {
                     Text(.approve)
                         .frame(maxWidth: .infinity)
                 }
-                .buttonStyle(.glassProminent)
+                .adaptiveProminentGlassButtonStyle()
                 Menu {
                     ForEach(RejectionReason.allCases, id: \.self) { reason in
                         Button {
@@ -112,7 +112,7 @@ struct ModerationScreen: View {
                     Text(.reject)
                         .frame(maxWidth: .infinity)
                 }
-                .buttonStyle(.glass)
+                .adaptiveGlassButtonStyle()
             }
             .disabled(isProcessing)
             .overlay {
@@ -145,14 +145,14 @@ struct ModerationScreen: View {
                     Text(post.isHidden ? .restore : .hide)
                         .frame(maxWidth: .infinity)
                 }
-                .buttonStyle(.glass)
+                .adaptiveGlassButtonStyle()
                 Button(role: .destructive) {
                     postPendingDeletion = post
                 } label: {
                     Text(.delete)
                         .frame(maxWidth: .infinity)
                 }
-                .buttonStyle(.glass)
+                .adaptiveGlassButtonStyle()
             }
             .disabled(isProcessing)
         }
