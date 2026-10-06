@@ -15,7 +15,7 @@ final class PostToForumUseCase {
         self.textModerator = textModerator
     }
 
-    func execute(authorId: String, text: String) async throws {
+    func execute(authorId: String, text: String, replyTo: MessageQuote? = nil, forwardedFrom: ForwardOrigin? = nil) async throws {
         guard textModerator.isAllowed(text) else {
             throw ContentRejectedError()
         }
@@ -24,7 +24,9 @@ final class PostToForumUseCase {
             authorId: authorId,
             authorName: profile?.displayName,
             authorAvatar: profile?.avatar,
-            text: text
+            text: text,
+            replyTo: replyTo,
+            forwardedFrom: forwardedFrom
         )
     }
 

@@ -11,9 +11,12 @@ final class GroupDetailViewModel {
     @ObservationIgnored private let joinGroup: JoinGroupUseCase
     @ObservationIgnored private let leaveGroup: LeaveGroupUseCase
     @ObservationIgnored private let fetchMembers: FetchGroupMembersUseCase
+    @ObservationIgnored private let editMessage: EditMessageUseCase
+    @ObservationIgnored private let deleteMessage: DeleteMessageUseCase
     @ObservationIgnored private var messagesTask: Task<Void, Never>?
 
     private(set) var uiState = GroupDetailUiState()
+    private(set) var copiedCount = 0
 
     init(
         groupId: String,
@@ -23,7 +26,9 @@ final class GroupDetailViewModel {
         sendMessage: SendGroupMessageUseCase,
         joinGroup: JoinGroupUseCase,
         leaveGroup: LeaveGroupUseCase,
-        fetchMembers: FetchGroupMembersUseCase
+        fetchMembers: FetchGroupMembersUseCase,
+        editMessage: EditMessageUseCase,
+        deleteMessage: DeleteMessageUseCase
     ) {
         self.groupId = groupId
         self.observeSession = observeSession
@@ -33,6 +38,8 @@ final class GroupDetailViewModel {
         self.joinGroup = joinGroup
         self.leaveGroup = leaveGroup
         self.fetchMembers = fetchMembers
+        self.editMessage = editMessage
+        self.deleteMessage = deleteMessage
     }
 
     func observe() async {
@@ -56,10 +63,19 @@ final class GroupDetailViewModel {
         }
         uiState.isSending = true
         uiState.isSendFailed = false
+        let mode = uiState.composerMode
         Task {
             do {
-                try await sendMessage.execute(groupId: groupId, senderId: userId, text: text)
+                switch mode {
+                case .new:
+                    try await sendMessage.execute(groupId: groupId, senderId: userId, text: text)
+                case .reply(let quote):
+                    try await sendMessage.execute(groupId: groupId, senderId: userId, text: text, replyTo: quote)
+                case .edit(let messageId):
+                    try await editMessage.execute(chat: .group(id: groupId), messageId: messageId, text: text)
+                }
                 uiState.draft = ""
+                uiState.composerMode = .new
             } catch is ContentRejectedError {
                 uiState.isTextRejected = true
             } catch {
@@ -67,6 +83,30 @@ final class GroupDetailViewModel {
             }
             uiState.isSending = false
         }
+    }
+
+    func handle(_ action: MessageAction, on target: MessageTarget) {
+        switch action {
+        case .reply:
+            uiState.composerMode = .reply(target.quote)
+        case .copy:
+            Clipboard.copy(target.text)
+            copiedCount += 1
+        case .edit:
+            uiState.composerMode = .edit(messageId: target.id)
+            updateDraft(target.text)
+        case .delete:
+            delete(target)
+        case .forward, .report:
+            return
+        }
+    }
+
+    func cancelComposerMode() {
+        if case .edit = uiState.composerMode {
+            uiState.draft = ""
+        }
+        uiState.composerMode = .new
     }
 
     func join() {
@@ -106,6 +146,15 @@ final class GroupDetailViewModel {
     func retryMessages() {
         stopMessages()
         updateMessagesObservation()
+    }
+
+    private func delete(_ target: MessageTarget) {
+        if case .edit(let messageId) = uiState.composerMode, messageId == target.id {
+            cancelComposerMode()
+        }
+        Task {
+            try? await deleteMessage.execute(chat: .group(id: groupId), messageId: target.id)
+        }
     }
 
     private func observeUser() async {

@@ -11,6 +11,7 @@ enum AppDestination: Hashable {
     case ecoTipDetail(tipId: String)
     case forum
     case groups
+    case archivedChats
     case group(id: String)
     case moderation
     case notifications

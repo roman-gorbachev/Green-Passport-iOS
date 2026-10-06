@@ -24,11 +24,13 @@ struct AppDestinationView: View {
         case .calendar:
             CalendarRoute(container: container)
         case .community:
-            CommunityHubScreen()
+            CommunityHubRoute(container: container)
         case .forum:
             ForumRoute(container: container)
         case .groups:
             GroupsRoute(container: container)
+        case .archivedChats:
+            ArchivedChatsRoute(container: container)
         case .group(let id):
             GroupDetailRoute(groupId: id, container: container)
         case .ecoTips:

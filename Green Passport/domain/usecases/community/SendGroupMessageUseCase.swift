@@ -13,7 +13,7 @@ final class SendGroupMessageUseCase {
         self.textModerator = textModerator
     }
 
-    func execute(groupId: String, senderId: String, text: String) async throws {
+    func execute(groupId: String, senderId: String, text: String, replyTo: MessageQuote? = nil, forwardedFrom: ForwardOrigin? = nil) async throws {
         guard textModerator.isAllowed(text) else {
             throw ContentRejectedError()
         }
@@ -23,7 +23,9 @@ final class SendGroupMessageUseCase {
             senderId: senderId,
             senderName: profile?.displayName,
             senderAvatar: profile?.avatar,
-            text: text
+            text: text,
+            replyTo: replyTo,
+            forwardedFrom: forwardedFrom
         )
     }
 }

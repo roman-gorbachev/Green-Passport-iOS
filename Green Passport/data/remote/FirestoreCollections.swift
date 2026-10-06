@@ -83,6 +83,10 @@ enum FirestoreCollections {
         return firestore.collection("\(root)/taskSubmissions")
     }
 
+    static func chatSettings(_ firestore: Firestore) -> CollectionReference {
+        return firestore.collection("\(root)/chatSettings")
+    }
+
     static func reports(_ firestore: Firestore) -> CollectionReference {
         return firestore.collection("\(root)/reports")
     }

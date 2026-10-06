@@ -9,4 +9,8 @@ nonisolated struct ForumPost: Identifiable, Hashable, Sendable {
     let createdAt: Date
     let isHidden: Bool
     let reportCount: Int
+    var replyTo: MessageQuote?
+    var forwardedFrom: ForwardOrigin?
+    var isEdited = false
+    var isDeleted = false
 }

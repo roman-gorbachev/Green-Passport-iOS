@@ -14,6 +14,7 @@ struct GroupDetailUiState {
     var isSendFailed = false
     var isJoining = false
     var isLeaving = false
+    var composerMode = ComposerMode.new
 
     var isMember: Bool {
         guard let group, let currentUserId else {

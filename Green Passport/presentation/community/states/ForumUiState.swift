@@ -8,4 +8,5 @@ struct ForumUiState {
     var isSendFailed = false
     var currentUserId: String?
     var reportedPostIds: Set<String> = []
+    var composerMode = ComposerMode.new
 }

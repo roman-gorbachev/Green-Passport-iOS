@@ -26,6 +26,7 @@ final class AppDIContainer {
     private lazy var shopRepository: ShopRepository = FirestoreShopRepository(firestore: firestore)
     private lazy var ecoTipsRepository: EcoTipsRepository = FirestoreEcoTipsRepository(firestore: firestore)
     private lazy var communityRepository: CommunityRepository = FirestoreCommunityRepository(firestore: firestore)
+    private lazy var chatSettingsRepository: ChatSettingsRepository = FirestoreChatSettingsRepository(firestore: firestore)
     private lazy var favoritesRepository: FavoritesRepository = FirestoreFavoritesRepository(firestore: firestore)
     private lazy var moderationRepository: ModerationRepository = FirebaseModerationRepository(
         firestore: firestore,
@@ -273,7 +274,49 @@ extension AppDIContainer {
                 userProfileRepository: userProfileRepository,
                 textModerator: textModerator
             ),
-            reportPost: ReportPostUseCase(moderationRepository: moderationRepository)
+            reportPost: ReportPostUseCase(moderationRepository: moderationRepository),
+            editMessage: EditMessageUseCase(communityRepository: communityRepository, textModerator: textModerator),
+            deleteMessage: DeleteMessageUseCase(communityRepository: communityRepository)
+        )
+    }
+
+    func buildChatSettingsViewModel(chatId: ChatId) -> ChatSettingsViewModel {
+        return ChatSettingsViewModel(
+            chatId: chatId,
+            observeSession: observeSessionUseCase,
+            observeChatSettings: ObserveChatSettingsUseCase(chatSettingsRepository: chatSettingsRepository),
+            updateChatSettings: UpdateChatSettingsUseCase(chatSettingsRepository: chatSettingsRepository)
+        )
+    }
+
+    func buildChatListViewModel(showsArchived: Bool) -> ChatListViewModel {
+        return ChatListViewModel(
+            showsArchived: showsArchived,
+            observeSession: observeSessionUseCase,
+            observeMyGroups: ObserveMyGroupsUseCase(communityRepository: communityRepository),
+            observeLatestForumPostDate: ObserveLatestForumPostDateUseCase(communityRepository: communityRepository),
+            observeChatSettings: ObserveChatSettingsUseCase(chatSettingsRepository: chatSettingsRepository),
+            updateChatSettings: UpdateChatSettingsUseCase(chatSettingsRepository: chatSettingsRepository)
+        )
+    }
+
+    func buildForwardViewModel(message: MessageTarget) -> ForwardViewModel {
+        return ForwardViewModel(
+            message: message,
+            observeSession: observeSessionUseCase,
+            observeMyGroups: ObserveMyGroupsUseCase(communityRepository: communityRepository),
+            forwardMessage: ForwardMessageUseCase(
+                postToForum: PostToForumUseCase(
+                    communityRepository: communityRepository,
+                    userProfileRepository: userProfileRepository,
+                    textModerator: textModerator
+                ),
+                sendGroupMessage: SendGroupMessageUseCase(
+                    communityRepository: communityRepository,
+                    userProfileRepository: userProfileRepository,
+                    textModerator: textModerator
+                )
+            )
         )
     }
 
@@ -300,7 +343,9 @@ extension AppDIContainer {
             ),
             joinGroup: JoinGroupUseCase(communityRepository: communityRepository),
             leaveGroup: LeaveGroupUseCase(communityRepository: communityRepository),
-            fetchMembers: FetchGroupMembersUseCase(communityRepository: communityRepository)
+            fetchMembers: FetchGroupMembersUseCase(communityRepository: communityRepository),
+            editMessage: EditMessageUseCase(communityRepository: communityRepository, textModerator: textModerator),
+            deleteMessage: DeleteMessageUseCase(communityRepository: communityRepository)
         )
     }
 

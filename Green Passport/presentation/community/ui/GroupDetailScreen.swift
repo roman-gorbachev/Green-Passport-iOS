@@ -12,6 +12,10 @@ struct GroupDetailScreen: View {
     let onLeave: () -> Void
     let onLoadMembers: () async -> Void
     let onRetryMessages: () -> Void
+    let onMessageAction: (MessageAction, MessageTarget) -> Void
+    let onCancelComposerMode: () -> Void
+    let isMuted: Bool
+    let onToggleMute: () -> Void
     let onRetry: () -> Void
 
     @State private var isMembersPresented = false
@@ -56,14 +60,20 @@ struct GroupDetailScreen: View {
     }
 
     private var chat: some View {
-        ScrollView {
-            LazyVStack(spacing: Spacing.xSmall) {
-                ForEach(uiState.messages) { message in
-                    messageRow(message)
+        ScrollViewReader { proxy in
+            ScrollView {
+                LazyVStack(spacing: Spacing.xSmall) {
+                    ForEach(uiState.messages) { message in
+                        messageRow(message) { messageId in
+                            withAnimation {
+                                proxy.scrollTo(messageId, anchor: .center)
+                            }
+                        }
+                    }
                 }
+                .padding(.horizontal, Spacing.screenHorizontal)
+                .padding(.vertical, Spacing.small)
             }
-            .padding(.horizontal, Spacing.screenHorizontal)
-            .padding(.vertical, Spacing.small)
         }
         .defaultScrollAnchor(.bottom)
         .defaultScrollAnchor(.bottom, for: .sizeChanges)
@@ -84,7 +94,9 @@ struct GroupDetailScreen: View {
                 placeholder: .forumDraftLabel,
                 isSending: uiState.isSending,
                 errorMessage: composerError,
-                onSend: onSend
+                onSend: onSend,
+                banner: uiState.composerMode.banner,
+                onCancelBanner: onCancelComposerMode
             )
         }
     }
@@ -131,6 +143,13 @@ struct GroupDetailScreen: View {
             } label: {
                 Label(String(localized: .groupMembers), systemImage: "person.2")
             }
+            Button(action: onToggleMute) {
+                if isMuted {
+                    Label(String(localized: .unmuteChat), systemImage: "bell")
+                } else {
+                    Label(String(localized: .muteChat), systemImage: "bell.slash")
+                }
+            }
             if let inviteCode = group.inviteCode {
                 ShareLink(item: String(localized: .groupInviteShareMsg(group.name, inviteCode))) {
                     Label(String(localized: .invite), systemImage: "person.badge.plus")
@@ -148,38 +167,56 @@ struct GroupDetailScreen: View {
     }
 
     @ViewBuilder
-    private func messageRow(_ message: GroupMessage) -> some View {
-        if message.senderId == uiState.currentUserId {
+    private func messageRow(_ message: GroupMessage, onQuoteTap: @escaping (String) -> Void) -> some View {
+        let target = message.target(currentUserId: uiState.currentUserId)
+        if target.isOwn {
             HStack {
                 Spacer(minLength: Self.bubbleInset)
-                bubble(message, showsSender: false)
+                bubble(message, showsSender: false, onQuoteTap: onQuoteTap)
                     .background(Palette.mintSurfaceHigh, in: .rect(cornerRadius: CornerRadius.large, style: .continuous))
+                    .contentShape(.contextMenuPreview, .rect(cornerRadius: CornerRadius.large, style: .continuous))
+                    .messageActions(target: target, onAction: onMessageAction)
             }
         } else {
             HStack(alignment: .bottom, spacing: Spacing.xSmall) {
                 ProfileAvatar(style: message.senderAvatar ?? .lime, size: Self.avatarSize)
-                bubble(message, showsSender: true)
+                bubble(message, showsSender: true, onQuoteTap: onQuoteTap)
                     .background(Palette.cardBackground, in: .rect(cornerRadius: CornerRadius.large, style: .continuous))
+                    .contentShape(.contextMenuPreview, .rect(cornerRadius: CornerRadius.large, style: .continuous))
+                    .messageActions(target: target, onAction: onMessageAction)
                 Spacer(minLength: Self.bubbleInset)
             }
         }
     }
 
-    private func bubble(_ message: GroupMessage, showsSender: Bool) -> some View {
+    private func bubble(_ message: GroupMessage, showsSender: Bool, onQuoteTap: @escaping (String) -> Void) -> some View {
         return VStack(alignment: .leading, spacing: Spacing.hairline) {
             if showsSender {
                 Text(message.senderName ?? String(localized: .guest))
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(Palette.forest)
             }
-            Text(message.text)
-                .font(.body)
-            Text(message.sentAt.formatted(date: .omitted, time: .shortened))
+            MessageContentView(
+                text: message.text,
+                isDeleted: message.isDeleted,
+                replyTo: message.replyTo,
+                forwardedFrom: message.forwardedFrom,
+                onQuoteTap: onQuoteTap
+            )
+            Text(timestamp(message))
                 .font(.caption2)
                 .foregroundStyle(Palette.secondaryText)
         }
         .padding(.horizontal, Spacing.medium)
         .padding(.vertical, Spacing.xSmall)
+    }
+
+    private func timestamp(_ message: GroupMessage) -> String {
+        let time = message.sentAt.formatted(date: .omitted, time: .shortened)
+        guard message.isEdited, !message.isDeleted else {
+            return time
+        }
+        return String(localized: .dateTime(String(localized: .edited), time))
     }
 }
 
@@ -202,6 +239,10 @@ struct GroupDetailScreen: View {
             onLeave: {},
             onLoadMembers: {},
             onRetryMessages: {},
+            onMessageAction: { _, _ in },
+            onCancelComposerMode: {},
+            isMuted: false,
+            onToggleMute: {},
             onRetry: {}
         )
     }

@@ -18,6 +18,14 @@ final class FirestoreCommunityRepository: CommunityRepository {
     private static let fieldFirstName = "firstName"
     private static let fieldLastName = "lastName"
     private static let fieldAvatar = "avatar"
+    private static let fieldReplyTo = "replyTo"
+    private static let fieldForwardedFrom = "forwardedFrom"
+    private static let fieldQuoteMessageId = "messageId"
+    private static let fieldQuoteSenderName = "senderName"
+    private static let fieldQuoteText = "text"
+    private static let fieldEditedAt = "editedAtEpochMillis"
+    private static let fieldDeleted = "deleted"
+    private static let fieldLastMessageAt = "lastMessageAtEpochMillis"
     private static let messagesLimit = 200
     private static let membersQueryChunkSize = 30
 
@@ -34,14 +42,29 @@ final class FirestoreCommunityRepository: CommunityRepository {
         }
     }
 
-    func postToForum(authorId: String, authorName: String?, authorAvatar: AvatarStyle?, text: String) async throws {
-        let data: [String: Any] = [
+    func observeLatestForumPostDate() -> AsyncThrowingStream<Date?, Error> {
+        let query = FirestoreCollections.posts(firestore).order(by: Self.fieldCreatedAt, descending: true).limit(to: 1)
+        return FirestoreStream.mapped(FirestoreStream.snapshots(of: query)) { snapshot in
+            return snapshot.documents.first?.date(Self.fieldCreatedAt)
+        }
+    }
+
+    func postToForum(
+        authorId: String,
+        authorName: String?,
+        authorAvatar: AvatarStyle?,
+        text: String,
+        replyTo: MessageQuote?,
+        forwardedFrom: ForwardOrigin?
+    ) async throws {
+        var data: [String: Any] = [
             Self.fieldAuthorId: authorId,
             Self.fieldAuthorName: authorName ?? NSNull(),
             Self.fieldAuthorAvatar: authorAvatar?.rawValue ?? NSNull(),
             Self.fieldText: text,
             Self.fieldCreatedAt: EpochMillis.now,
         ]
+        Self.addExtras(to: &data, replyTo: replyTo, forwardedFrom: forwardedFrom)
         _ = try await FirestoreCollections.posts(firestore).addDocument(data: data)
     }
 
@@ -98,15 +121,90 @@ final class FirestoreCommunityRepository: CommunityRepository {
         }
     }
 
-    func sendMessage(groupId: String, senderId: String, senderName: String?, senderAvatar: AvatarStyle?, text: String) async throws {
-        let data: [String: Any] = [
+    func sendMessage(
+        groupId: String,
+        senderId: String,
+        senderName: String?,
+        senderAvatar: AvatarStyle?,
+        text: String,
+        replyTo: MessageQuote?,
+        forwardedFrom: ForwardOrigin?
+    ) async throws {
+        var data: [String: Any] = [
             Self.fieldSenderId: senderId,
             Self.fieldSenderName: senderName ?? NSNull(),
             Self.fieldSenderAvatar: senderAvatar?.rawValue ?? NSNull(),
             Self.fieldText: text,
             Self.fieldCreatedAt: EpochMillis.now,
         ]
+        Self.addExtras(to: &data, replyTo: replyTo, forwardedFrom: forwardedFrom)
         _ = try await FirestoreCollections.chatMessages(firestore, chatId: groupId).addDocument(data: data)
+    }
+
+    func editMessage(in chat: ChatId, messageId: String, text: String) async throws {
+        try await messageReference(in: chat, messageId: messageId).updateData([
+            Self.fieldText: text,
+            Self.fieldEditedAt: EpochMillis.now,
+        ])
+    }
+
+    func deleteMessage(in chat: ChatId, messageId: String) async throws {
+        try await messageReference(in: chat, messageId: messageId).updateData([
+            Self.fieldText: "",
+            Self.fieldDeleted: true,
+            Self.fieldReplyTo: FieldValue.delete(),
+            Self.fieldForwardedFrom: FieldValue.delete(),
+        ])
+    }
+
+    func observeMyGroups(userId: String) -> AsyncThrowingStream<[CommunityGroup], Error> {
+        let query = FirestoreCollections.groups(firestore).whereField(Self.fieldMemberIds, arrayContains: userId)
+        return FirestoreStream.mapped(FirestoreStream.snapshots(of: query)) { snapshot in
+            return snapshot.documents.compactMap { return Self.group(from: $0) }
+        }
+    }
+
+    private func messageReference(in chat: ChatId, messageId: String) -> DocumentReference {
+        switch chat {
+        case .forum:
+            return FirestoreCollections.posts(firestore).document(messageId)
+        case .group(let id):
+            return FirestoreCollections.chatMessages(firestore, chatId: id).document(messageId)
+        }
+    }
+
+    private static func addExtras(to data: inout [String: Any], replyTo: MessageQuote?, forwardedFrom: ForwardOrigin?) {
+        if let replyTo {
+            let quote: [String: Any] = [
+                fieldQuoteMessageId: replyTo.messageId,
+                fieldQuoteSenderName: replyTo.senderName ?? NSNull(),
+                fieldQuoteText: replyTo.text,
+            ]
+            data[fieldReplyTo] = quote
+        }
+        if let forwardedFrom {
+            let origin: [String: Any] = [fieldQuoteSenderName: forwardedFrom.senderName ?? NSNull()]
+            data[fieldForwardedFrom] = origin
+        }
+    }
+
+    private static func quote(from document: DocumentSnapshot) -> MessageQuote? {
+        guard let map = document.get(fieldReplyTo) as? [String: Any],
+              let messageId = map[fieldQuoteMessageId] as? String else {
+            return nil
+        }
+        return MessageQuote(
+            messageId: messageId,
+            senderName: map[fieldQuoteSenderName] as? String,
+            text: map[fieldQuoteText] as? String ?? ""
+        )
+    }
+
+    private static func forwardOrigin(from document: DocumentSnapshot) -> ForwardOrigin? {
+        guard let map = document.get(fieldForwardedFrom) as? [String: Any] else {
+            return nil
+        }
+        return ForwardOrigin(senderName: map[fieldQuoteSenderName] as? String)
     }
 
     func fetchMembers(ids: [String]) async throws -> [GroupMember] {
@@ -135,7 +233,8 @@ final class FirestoreCommunityRepository: CommunityRepository {
             name: name,
             memberIds: document.strings(fieldMemberIds),
             ownerId: document.string(fieldOwnerId),
-            inviteCode: document.string(fieldInviteCode)
+            inviteCode: document.string(fieldInviteCode),
+            lastMessageAt: document.date(fieldLastMessageAt)
         )
     }
 
@@ -151,7 +250,11 @@ final class FirestoreCommunityRepository: CommunityRepository {
             senderName: document.string(fieldSenderName),
             senderAvatar: document.string(fieldSenderAvatar).flatMap(AvatarStyle.init(rawValue:)),
             text: text,
-            sentAt: sentAt
+            sentAt: sentAt,
+            replyTo: quote(from: document),
+            forwardedFrom: forwardOrigin(from: document),
+            isEdited: document.date(fieldEditedAt) != nil,
+            isDeleted: document.bool(fieldDeleted) ?? false
         )
     }
 
@@ -179,7 +282,11 @@ final class FirestoreCommunityRepository: CommunityRepository {
             text: text,
             createdAt: createdAt,
             isHidden: document.bool(fieldHidden) ?? false,
-            reportCount: document.int(fieldReportCount) ?? 0
+            reportCount: document.int(fieldReportCount) ?? 0,
+            replyTo: quote(from: document),
+            forwardedFrom: forwardOrigin(from: document),
+            isEdited: document.date(fieldEditedAt) != nil,
+            isDeleted: document.bool(fieldDeleted) ?? false
         )
     }
 }
