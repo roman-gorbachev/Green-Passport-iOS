@@ -17,87 +17,91 @@ struct ProfileScreen: View {
 
     var body: some View {
         List {
-            Section {
-                header
-                ProgressHeroCard(points: uiState.points, level: uiState.level)
-                    .redacted(reason: uiState.isLoading ? .placeholder : [])
-                    .listRowInsets(EdgeInsets())
-                    .listRowBackground(Color.clear)
-            }
-            .listRowSeparator(.hidden)
-            Section {
-                if uiState.isModerator {
-                    menuButton(title: .moderation, systemImage: "checkmark.shield.fill", color: Palette.error) {
-                        onAction(.moderation)
-                    }
+            Group {
+                Section {
+                    header
+                    ProgressHeroCard(points: uiState.points, level: uiState.level)
+                        .redacted(reason: uiState.isLoading ? .placeholder : [])
+                        .listRowInsets(EdgeInsets())
+                        .listRowBackground(Color.clear)
                 }
-                if !uiState.isAnonymous {
-                    menuButton(title: .editProfile, systemImage: "pencil", color: Palette.forest) {
-                        onAction(.editProfile)
+                .listRowSeparator(.hidden)
+                Section {
+                    if uiState.isModerator {
+                        menuButton(title: .moderation, systemImage: "checkmark.shield.fill", color: Palette.error) {
+                            onAction(.moderation)
+                        }
                     }
-                }
-                Picker(selection: Binding(get: { return uiState.theme }, set: { onAction(.themeSelected($0)) })) {
-                    ForEach(AppTheme.allCases, id: \.self) { theme in
-                        Text(theme.title)
-                            .tag(theme)
+                    if !uiState.isAnonymous {
+                        menuButton(title: .editProfile, systemImage: "pencil", color: Palette.forest) {
+                            onAction(.editProfile)
+                        }
                     }
-                } label: {
-                    HStack(spacing: Spacing.small) {
-                        SymbolTile(systemImage: uiState.theme.systemImage, style: .tinted(SectionColor.games), size: Self.tileSize)
-                        Text(.theme)
-                    }
-                }
-                .pickerStyle(.menu)
-                .tint(Palette.secondaryText)
-                Button {
-                    onAction(.language)
-                } label: {
-                    HStack(spacing: Spacing.small) {
-                        SymbolTile(systemImage: "character.bubble.fill", style: .tinted(SectionColor.calendar), size: Self.tileSize)
-                        Text(.language)
-                            .foregroundStyle(Color.primary)
-                        Spacer()
-                        Text(languageName)
-                            .foregroundStyle(Palette.secondaryText)
-                        Image(systemName: "arrow.up.forward.app")
-                            .font(.footnote)
-                            .foregroundStyle(Color(.tertiaryLabel))
-                    }
-                }
-            }
-            Section {
-                ForEach(NotificationCategory.allCases, id: \.self) { category in
-                    Toggle(isOn: notificationBinding(category)) {
+                    Picker(selection: Binding(get: { return uiState.theme }, set: { onAction(.themeSelected($0)) })) {
+                        ForEach(AppTheme.allCases, id: \.self) { theme in
+                            Text(theme.title)
+                                .tag(theme)
+                        }
+                    } label: {
                         HStack(spacing: Spacing.small) {
-                            SymbolTile(systemImage: category.systemImage, style: .tinted(Palette.forest), size: Self.tileSize)
-                            Text(category.title)
+                            SymbolTile(systemImage: uiState.theme.systemImage, style: .tinted(SectionColor.games), size: Self.tileSize)
+                            Text(.theme)
+                        }
+                    }
+                    .pickerStyle(.menu)
+                    .tint(Palette.secondaryText)
+                    Button {
+                        onAction(.language)
+                    } label: {
+                        HStack(spacing: Spacing.small) {
+                            SymbolTile(systemImage: "character.bubble.fill", style: .tinted(SectionColor.calendar), size: Self.tileSize)
+                            Text(.language)
+                                .foregroundStyle(Color.primary)
+                            Spacer()
+                            Text(languageName)
+                                .foregroundStyle(Palette.secondaryText)
+                            Image(systemName: "arrow.up.forward.app")
+                                .font(.footnote)
+                                .foregroundStyle(Palette.tertiaryText)
                         }
                     }
                 }
-            } header: {
-                Text(.notificationsSettings)
-            }
-            Section {
-                ForEach(ProfileMenuEntry.allCases, id: \.self) { entry in
-                    menuButton(title: entry.title, systemImage: entry.systemImage, color: entry.color) {
-                        onAction(.open(entry.destination))
+                Section {
+                    ForEach(NotificationCategory.allCases, id: \.self) { category in
+                        Toggle(isOn: notificationBinding(category)) {
+                            HStack(spacing: Spacing.small) {
+                                SymbolTile(systemImage: category.systemImage, style: .tinted(Palette.forest), size: Self.tileSize)
+                                Text(category.title)
+                            }
+                        }
+                    }
+                } header: {
+                    Text(.notificationsSettings)
+                }
+                Section {
+                    ForEach(ProfileMenuEntry.allCases, id: \.self) { entry in
+                        menuButton(title: entry.title, systemImage: entry.systemImage, color: entry.color) {
+                            onAction(.open(entry.destination))
+                        }
+                    }
+                }
+                Section {
+                    Button(role: .destructive) {
+                        onAction(.signOut)
+                    } label: {
+                        Label {
+                            Text(.profileSignOut)
+                        } icon: {
+                            Image(systemName: "rectangle.portrait.and.arrow.right")
+                        }
+                        .foregroundStyle(Palette.error)
                     }
                 }
             }
-            Section {
-                Button(role: .destructive) {
-                    onAction(.signOut)
-                } label: {
-                    Label {
-                        Text(.profileSignOut)
-                    } icon: {
-                        Image(systemName: "rectangle.portrait.and.arrow.right")
-                    }
-                    .foregroundStyle(Palette.error)
-                }
-            }
+            .themedRowBackground()
         }
         .listStyle(.insetGrouped)
+        .themedListBackground()
         .navigationTitle(Text(.profile))
         .navigationBarTitleDisplayMode(.inline)
     }
@@ -149,7 +153,7 @@ struct ProfileScreen: View {
                 Spacer()
                 Image(systemName: "chevron.right")
                     .font(.footnote.weight(.semibold))
-                    .foregroundStyle(Color(.tertiaryLabel))
+                    .foregroundStyle(Palette.tertiaryText)
             }
         }
     }

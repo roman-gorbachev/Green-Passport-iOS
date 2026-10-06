@@ -9,59 +9,63 @@ struct FavoritesScreen: View {
 
     var body: some View {
         List {
-            switch segment {
-            case .tasks:
-                ForEach(uiState.favoriteTasks) { task in
-                    Button {
-                        onAction(.taskSelected(task))
-                    } label: {
-                        ListRow(title: task.title, subtitle: String(localized: task.category.title)) {
-                            MascotImage(size: Self.mascotSize)
-                        } trailing: {
-                            PointsBadge(points: task.rewardPoints)
-                            FavoriteButton(isFavorite: true) {
-                                onAction(.taskRemoved(task))
+            Group {
+                switch segment {
+                case .tasks:
+                    ForEach(uiState.favoriteTasks) { task in
+                        Button {
+                            onAction(.taskSelected(task))
+                        } label: {
+                            ListRow(title: task.title, subtitle: String(localized: task.category.title)) {
+                                MascotImage(size: Self.mascotSize)
+                            } trailing: {
+                                PointsBadge(points: task.rewardPoints)
+                                FavoriteButton(isFavorite: true) {
+                                    onAction(.taskRemoved(task))
+                                }
                             }
                         }
+                        .buttonStyle(.plain)
+                        .removableFromFavorites { onAction(.taskRemoved(task)) }
                     }
-                    .buttonStyle(.plain)
-                    .removableFromFavorites { onAction(.taskRemoved(task)) }
-                }
-            case .tips:
-                ForEach(uiState.bookmarkedTips) { tip in
-                    Button {
-                        onAction(.tipSelected(tip))
-                    } label: {
-                        ListRow(title: tip.title, subtitle: String(localized: tip.category.title)) {
-                            SymbolTile(systemImage: tip.category.systemImage)
-                        } trailing: {
-                            FavoriteButton(isFavorite: true) {
-                                onAction(.tipRemoved(tip))
+                case .tips:
+                    ForEach(uiState.bookmarkedTips) { tip in
+                        Button {
+                            onAction(.tipSelected(tip))
+                        } label: {
+                            ListRow(title: tip.title, subtitle: String(localized: tip.category.title)) {
+                                SymbolTile(systemImage: tip.category.systemImage)
+                            } trailing: {
+                                FavoriteButton(isFavorite: true) {
+                                    onAction(.tipRemoved(tip))
+                                }
                             }
                         }
+                        .buttonStyle(.plain)
+                        .removableFromFavorites { onAction(.tipRemoved(tip)) }
                     }
-                    .buttonStyle(.plain)
-                    .removableFromFavorites { onAction(.tipRemoved(tip)) }
-                }
-            case .places:
-                ForEach(uiState.savedPlaces) { point in
-                    Button {
-                        onAction(.placeSelected(point))
-                    } label: {
-                        ListRow(title: point.name, subtitle: String(localized: point.type.title)) {
-                            SymbolTile(systemImage: point.type.systemImage)
-                        } trailing: {
-                            FavoriteButton(isFavorite: true) {
-                                onAction(.placeRemoved(point))
+                case .places:
+                    ForEach(uiState.savedPlaces) { point in
+                        Button {
+                            onAction(.placeSelected(point))
+                        } label: {
+                            ListRow(title: point.name, subtitle: String(localized: point.type.title)) {
+                                SymbolTile(systemImage: point.type.systemImage)
+                            } trailing: {
+                                FavoriteButton(isFavorite: true) {
+                                    onAction(.placeRemoved(point))
+                                }
                             }
                         }
+                        .buttonStyle(.plain)
+                        .removableFromFavorites { onAction(.placeRemoved(point)) }
                     }
-                    .buttonStyle(.plain)
-                    .removableFromFavorites { onAction(.placeRemoved(point)) }
                 }
             }
+            .themedRowBackground()
         }
         .listStyle(.insetGrouped)
+        .themedListBackground()
         .animation(.snappy, value: uiState.favoriteTaskIds)
         .animation(.snappy, value: uiState.bookmarkedTipIds)
         .animation(.snappy, value: uiState.savedMapPointIds)

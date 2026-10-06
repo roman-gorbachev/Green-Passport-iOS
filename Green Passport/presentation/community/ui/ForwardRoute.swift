@@ -13,6 +13,7 @@ struct ForwardRoute: View {
             ForwardScreen(uiState: viewModel.uiState, onForward: viewModel.forward)
         }
         .presentationDetents([.medium, .large])
+        .presentationBackground(Palette.screenBackground)
         .task {
             await viewModel.observe()
         }

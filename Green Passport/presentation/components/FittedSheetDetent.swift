@@ -12,6 +12,7 @@ struct FittedSheetDetent: ViewModifier {
                 contentHeight = height
             }
             .presentationDetents([.height(sheetHeight)])
+            .presentationBackground(Palette.screenBackground)
             .presentationDragIndicator(.visible)
     }
 

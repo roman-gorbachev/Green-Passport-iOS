@@ -74,6 +74,7 @@ private struct MapPointSheetPresentation: ViewModifier {
                 height = measured + MapPointSheet.bottomAllowance
             }
             .presentationDetents([.height(height)])
+            .presentationBackground(Palette.screenBackground)
             .presentationDragIndicator(.visible)
             .presentationBackgroundInteraction(.enabled(upThrough: .height(height)))
     }

@@ -9,11 +9,15 @@ struct ProgressHeroCard: View {
     private static let bubbleMaxWidth: CGFloat = 132
     private static let bubbleMinimumScale: CGFloat = 0.8
     private static let pointsMinimumScale: CGFloat = 0.5
+    private static let glowOpacity: Double = 0.35
+    private static let glowRadius: CGFloat = 20
 
     let points: Int
     var level: Level?
     var streakDays = 0
     var onTap: (() -> Void)?
+
+    @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
         if let onTap {
@@ -75,7 +79,8 @@ struct ProgressHeroCard: View {
         .padding(Spacing.medium)
         .padding(.leading, Spacing.xSmall)
         .frame(maxWidth: .infinity, minHeight: Self.minHeight)
-        .background(Palette.forest.gradient, in: .rect(cornerRadius: CornerRadius.large, style: .continuous))
+        .background(Palette.forestDeep.gradient, in: .rect(cornerRadius: CornerRadius.large, style: .continuous))
+        .shadow(color: colorScheme == .dark ? Palette.forest.opacity(Self.glowOpacity) : .clear, radius: Self.glowRadius)
         .accessibilityElement(children: .combine)
     }
 

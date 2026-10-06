@@ -59,7 +59,7 @@ struct ShopScreen: View {
                 } trailing: {
                     Image(systemName: "chevron.right")
                         .font(.footnote.weight(.semibold))
-                        .foregroundStyle(Color(.tertiaryLabel))
+                        .foregroundStyle(Palette.tertiaryText)
                 }
                 .padding(.horizontal, Spacing.medium)
                 .padding(.vertical, Spacing.xSmall)

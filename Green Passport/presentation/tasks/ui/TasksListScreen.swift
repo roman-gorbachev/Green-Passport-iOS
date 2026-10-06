@@ -10,9 +10,13 @@ struct TasksListScreen: View {
 
     var body: some View {
         List {
-            content
+            Group {
+                content
+            }
+            .themedRowBackground()
         }
         .listStyle(.insetGrouped)
+        .themedListBackground()
         .safeAreaInset(edge: .top, spacing: 0) {
             if !uiState.filterChips.isEmpty {
                 activeFilters
@@ -39,6 +43,7 @@ struct TasksListScreen: View {
                 onApply: { onAction(.filtersChanged($0)) }
             )
             .presentationDetents([.medium, .large])
+            .presentationBackground(Palette.screenBackground)
             .presentationDragIndicator(.visible)
         }
         .overlay {

@@ -23,41 +23,45 @@ struct CommunityHubScreen: View {
 
     var body: some View {
         List {
-            if uiState.isSearching {
-                searchResults
-            } else {
-                if isArchiveRevealed && uiState.archivedCount > 0 {
-                    Section {
-                        archiveRow
-                    }
-                }
-                Section {
-                    forumRow
-                } header: {
-                    Text(.communityForumTitle)
-                }
-                Section {
-                    if uiState.hasError {
-                        StateView(kind: .error(retry: onRetry))
-                    } else if uiState.groups.isEmpty && !uiState.isLoading {
-                        Text(.myGroupsEmptyMsg)
-                            .font(.subheadline)
-                            .foregroundStyle(Palette.secondaryText)
-                    } else {
-                        ForEach(uiState.groups) { chat in
-                            ChatListRow(chat: chat) {
-                                onOpenChat(chat.chatId)
-                            } onAction: { action in
-                                onChatAction(action, chat)
-                            }
+            Group {
+                if uiState.isSearching {
+                    searchResults
+                } else {
+                    if isArchiveRevealed && uiState.archivedCount > 0 {
+                        Section {
+                            archiveRow
                         }
                     }
-                } header: {
-                    Text(.myGroups)
+                    Section {
+                        forumRow
+                    } header: {
+                        Text(.communityForumTitle)
+                    }
+                    Section {
+                        if uiState.hasError {
+                            StateView(kind: .error(retry: onRetry))
+                        } else if uiState.groups.isEmpty && !uiState.isLoading {
+                            Text(.myGroupsEmptyMsg)
+                                .font(.subheadline)
+                                .foregroundStyle(Palette.secondaryText)
+                        } else {
+                            ForEach(uiState.groups) { chat in
+                                ChatListRow(chat: chat) {
+                                    onOpenChat(chat.chatId)
+                                } onAction: { action in
+                                    onChatAction(action, chat)
+                                }
+                            }
+                        }
+                    } header: {
+                        Text(.myGroups)
+                    }
                 }
             }
+            .themedRowBackground()
         }
         .listStyle(.insetGrouped)
+        .themedListBackground()
         .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always), prompt: Text(.searchGroupsPlaceholder))
         .scrollDismissesKeyboard(.interactively)
         .onScrollGeometryChange(for: CGFloat.self) { geometry in
@@ -147,7 +151,7 @@ struct CommunityHubScreen: View {
                         .foregroundStyle(Palette.secondaryText)
                     Image(systemName: "chevron.right")
                         .font(.footnote.weight(.semibold))
-                        .foregroundStyle(Color(.tertiaryLabel))
+                        .foregroundStyle(Palette.tertiaryText)
                 }
             }
         }
@@ -220,7 +224,7 @@ struct CommunityHubScreen: View {
             } trailing: {
                 Image(systemName: "chevron.right")
                     .font(.footnote.weight(.semibold))
-                    .foregroundStyle(Color(.tertiaryLabel))
+                    .foregroundStyle(Palette.tertiaryText)
             }
         }
         .buttonStyle(.plain)

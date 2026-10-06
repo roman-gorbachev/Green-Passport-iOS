@@ -24,7 +24,7 @@ struct ArticleCoverImage: View {
 
     private func placeholder(side: CGFloat) -> some View {
         return Rectangle()
-            .fill(Palette.forest.gradient)
+            .fill(Palette.forestDeep.gradient)
             .overlay {
                 Image(systemName: tip.category.systemImage)
                     .resizable()

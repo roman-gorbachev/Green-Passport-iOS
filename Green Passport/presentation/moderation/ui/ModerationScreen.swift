@@ -39,28 +39,32 @@ struct ModerationScreen: View {
 
     private var content: some View {
         List {
-            if uiState.hasActionError {
-                Text(.actionFailedMsg)
-                    .foregroundStyle(Palette.error)
+            Group {
+                if uiState.hasActionError {
+                    Text(.actionFailedMsg)
+                        .foregroundStyle(Palette.error)
+                }
+                switch tab {
+                case .photos:
+                    if uiState.submissions.isEmpty {
+                        emptyRow(.noPhotosToReview)
+                    }
+                    ForEach(uiState.submissions) { item in
+                        submissionRow(item)
+                    }
+                case .reports:
+                    if uiState.flaggedPosts.isEmpty {
+                        emptyRow(.noReports)
+                    }
+                    ForEach(uiState.flaggedPosts) { post in
+                        postRow(post)
+                    }
+                }
             }
-            switch tab {
-            case .photos:
-                if uiState.submissions.isEmpty {
-                    emptyRow(.noPhotosToReview)
-                }
-                ForEach(uiState.submissions) { item in
-                    submissionRow(item)
-                }
-            case .reports:
-                if uiState.flaggedPosts.isEmpty {
-                    emptyRow(.noReports)
-                }
-                ForEach(uiState.flaggedPosts) { post in
-                    postRow(post)
-                }
-            }
+            .themedRowBackground()
         }
         .listStyle(.insetGrouped)
+        .themedListBackground()
         .safeAreaInset(edge: .top) {
             Picker(selection: $tab) {
                 Text(.taskPhotosCount(uiState.submissions.count)).tag(ModerationTab.photos)

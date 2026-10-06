@@ -11,7 +11,7 @@ extension Game {
 
     var gradientColors: [Color] {
         let colors = iconColors.compactMap { return Self.color(hex: $0) }
-        return colors.count >= Self.gradientColorCount ? colors : [Palette.forest, Palette.forest]
+        return colors.count >= Self.gradientColorCount ? colors : [Palette.forestDeep, Palette.forestDeep]
     }
 
     var tileEmoji: String {

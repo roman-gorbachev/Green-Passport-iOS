@@ -7,13 +7,17 @@ struct ArchivedChatsScreen: View {
 
     var body: some View {
         List(uiState.chats) { chat in
-            ChatListRow(chat: chat) {
-                onOpenChat(chat.chatId)
-            } onAction: { action in
-                onChatAction(action, chat)
+            Group {
+                ChatListRow(chat: chat) {
+                    onOpenChat(chat.chatId)
+                } onAction: { action in
+                    onChatAction(action, chat)
+                }
             }
+            .themedRowBackground()
         }
         .listStyle(.insetGrouped)
+        .themedListBackground()
         .animation(.snappy, value: uiState.chats)
         .navigationTitle(Text(.archivedChats))
     }

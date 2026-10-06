@@ -12,13 +12,17 @@ struct GroupMembersSheet: View {
     var body: some View {
         NavigationStack {
             List(members) { member in
-                ListRow(title: member.name ?? String(localized: .guest)) {
-                    ProfileAvatar(style: member.avatar, size: Self.avatarSize)
-                } trailing: {
-                    EmptyView()
+                Group {
+                    ListRow(title: member.name ?? String(localized: .guest)) {
+                        ProfileAvatar(style: member.avatar, size: Self.avatarSize)
+                    } trailing: {
+                        EmptyView()
+                    }
                 }
+                .themedRowBackground()
             }
             .listStyle(.insetGrouped)
+            .themedListBackground()
             .overlay {
                 if isLoading && members.isEmpty {
                     StateView(kind: .loading)
@@ -34,6 +38,7 @@ struct GroupMembersSheet: View {
                 }
             }
         }
+        .presentationBackground(Palette.screenBackground)
         .task {
             await onLoad()
         }

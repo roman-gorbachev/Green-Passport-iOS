@@ -57,7 +57,7 @@ struct CouponDetailScreen: View {
                     .background {
                         RoundedRectangle(cornerRadius: CornerRadius.large, style: .continuous)
                             .fill(LinearGradient(
-                                colors: [Palette.forest, Palette.forest.opacity(Self.cardGradientEndOpacity)],
+                                colors: [Palette.forestDeep, Palette.forestDeep.opacity(Self.cardGradientEndOpacity)],
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
                             ))

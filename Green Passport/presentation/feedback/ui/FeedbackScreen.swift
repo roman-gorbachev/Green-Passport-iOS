@@ -18,13 +18,17 @@ struct FeedbackScreen: View {
 
     var body: some View {
         Form {
-            reviewSection
-            suggestionSection
-            if let survey = uiState.survey {
-                surveySection(survey)
+            Group {
+                reviewSection
+                suggestionSection
+                if let survey = uiState.survey {
+                    surveySection(survey)
+                }
+                supportSection
             }
-            supportSection
+            .themedRowBackground()
         }
+        .themedListBackground()
         .scrollDismissesKeyboard(.interactively)
         .overlay {
             if uiState.isLoading {

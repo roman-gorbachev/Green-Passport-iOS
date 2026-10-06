@@ -16,13 +16,17 @@ struct ForumScreen: View {
     var body: some View {
         ScrollViewReader { proxy in
             List(uiState.posts) { post in
-                postRow(post) { messageId in
-                    withAnimation {
-                        proxy.scrollTo(messageId, anchor: .center)
+                Group {
+                    postRow(post) { messageId in
+                        withAnimation {
+                            proxy.scrollTo(messageId, anchor: .center)
+                        }
                     }
                 }
+                .themedRowBackground()
             }
             .listStyle(.insetGrouped)
+            .themedListBackground()
         }
         .scrollDismissesKeyboard(.interactively)
         .overlay {

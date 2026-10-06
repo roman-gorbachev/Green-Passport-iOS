@@ -18,7 +18,7 @@ struct TaskRowsCard: View {
                         PointsBadge(points: task.rewardPoints)
                         Image(systemName: "chevron.right")
                             .font(.footnote.weight(.semibold))
-                            .foregroundStyle(Color(.tertiaryLabel))
+                            .foregroundStyle(Palette.tertiaryText)
                     }
                     .padding(.horizontal, Spacing.medium)
                     .padding(.vertical, Spacing.xSmall)

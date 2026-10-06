@@ -25,65 +25,69 @@ struct TaskFiltersSheet: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section {
-                    Picker(selection: $draft.status) {
-                        ForEach(TaskStatusFilter.allCases, id: \.self) { status in
-                            Text(status.title)
-                                .tag(status)
+                Group {
+                    Section {
+                        Picker(selection: $draft.status) {
+                            ForEach(TaskStatusFilter.allCases, id: \.self) { status in
+                                Text(status.title)
+                                    .tag(status)
+                            }
+                        } label: {
+                            Text(.status)
                         }
-                    } label: {
+                        .pickerStyle(.inline)
+                        .labelsHidden()
+                    } header: {
                         Text(.status)
                     }
-                    .pickerStyle(.inline)
-                    .labelsHidden()
-                } header: {
-                    Text(.status)
-                }
-                Section {
-                    ForEach(TaskVerification.filterOrder, id: \.self) { verification in
-                        checkRow(
-                            title: verification.title,
-                            subtitle: verification.hint,
-                            systemImage: verification.systemImage,
-                            isOn: draft.verifications.contains(verification)
-                        ) {
-                            toggle(verification, in: \.verifications)
+                    Section {
+                        ForEach(TaskVerification.filterOrder, id: \.self) { verification in
+                            checkRow(
+                                title: verification.title,
+                                subtitle: verification.hint,
+                                systemImage: verification.systemImage,
+                                isOn: draft.verifications.contains(verification)
+                            ) {
+                                toggle(verification, in: \.verifications)
+                            }
                         }
+                    } header: {
+                        Text(.confirmation)
                     }
-                } header: {
-                    Text(.confirmation)
-                }
-                Section {
-                    Picker(selection: $draft.city) {
-                        Text(TaskCityFilter.profileCity.title(profileCity: profileCity))
-                            .tag(TaskCityFilter.profileCity)
-                        Text(TaskCityFilter.all.title(profileCity: profileCity))
-                            .tag(TaskCityFilter.all)
-                        ForEach(SupportedCities.all.filter { return $0 != profileCity }, id: \.self) { city in
-                            Text(CityName.title(city))
-                                .tag(TaskCityFilter.city(city))
+                    Section {
+                        Picker(selection: $draft.city) {
+                            Text(TaskCityFilter.profileCity.title(profileCity: profileCity))
+                                .tag(TaskCityFilter.profileCity)
+                            Text(TaskCityFilter.all.title(profileCity: profileCity))
+                                .tag(TaskCityFilter.all)
+                            ForEach(SupportedCities.all.filter { return $0 != profileCity }, id: \.self) { city in
+                                Text(CityName.title(city))
+                                    .tag(TaskCityFilter.city(city))
+                            }
+                        } label: {
+                            Text(.city)
                         }
-                    } label: {
-                        Text(.city)
+                        .pickerStyle(.menu)
+                        .tint(Palette.forest)
                     }
-                    .pickerStyle(.menu)
-                    .tint(Palette.forest)
-                }
-                Section {
-                    ForEach(TaskCategory.allCases, id: \.self) { category in
-                        checkRow(
-                            title: category.title,
-                            subtitle: nil,
-                            systemImage: category.systemImage,
-                            isOn: draft.categories.contains(category)
-                        ) {
-                            toggle(category, in: \.categories)
+                    Section {
+                        ForEach(TaskCategory.allCases, id: \.self) { category in
+                            checkRow(
+                                title: category.title,
+                                subtitle: nil,
+                                systemImage: category.systemImage,
+                                isOn: draft.categories.contains(category)
+                            ) {
+                                toggle(category, in: \.categories)
+                            }
                         }
+                    } header: {
+                        Text(.category)
                     }
-                } header: {
-                    Text(.category)
                 }
+                .themedRowBackground()
             }
+            .themedListBackground()
             .tint(Palette.forest)
             .safeAreaInset(edge: .bottom) {
                 AppButton(title: .showTasksCount(resultCount(draft))) {

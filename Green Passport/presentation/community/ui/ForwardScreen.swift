@@ -6,19 +6,23 @@ struct ForwardScreen: View {
 
     var body: some View {
         List {
-            Section {
-                chatButton(chatId: .forum, title: String(localized: .communityForumTitle))
-                ForEach(uiState.groups) { group in
-                    chatButton(chatId: .group(id: group.id), title: group.name)
-                }
-            } footer: {
-                if let failure = failureMessage {
-                    Text(failure)
-                        .foregroundStyle(Palette.error)
+            Group {
+                Section {
+                    chatButton(chatId: .forum, title: String(localized: .communityForumTitle))
+                    ForEach(uiState.groups) { group in
+                        chatButton(chatId: .group(id: group.id), title: group.name)
+                    }
+                } footer: {
+                    if let failure = failureMessage {
+                        Text(failure)
+                            .foregroundStyle(Palette.error)
+                    }
                 }
             }
+            .themedRowBackground()
         }
         .listStyle(.insetGrouped)
+        .themedListBackground()
         .overlay {
             if uiState.isLoading {
                 StateView(kind: .loading)

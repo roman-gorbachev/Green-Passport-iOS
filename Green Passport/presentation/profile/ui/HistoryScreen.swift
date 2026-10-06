@@ -17,19 +17,23 @@ struct HistoryScreen: View {
                 StateView(kind: .empty(message: .historyEmpty))
             case .success(let entries):
                 List(entries) { entry in
-                    ListRow(
-                        title: entry.title,
-                        subtitle: String(localized: .historyRowSubtitleFormat(
-                            String(localized: entry.type.title),
-                            entry.timestamp.formatted(date: .abbreviated, time: .shortened)
-                        ))
-                    ) {
-                        SymbolTile(systemImage: entry.type.systemImage, size: Self.tileSize)
-                    } trailing: {
-                        EmptyView()
+                    Group {
+                        ListRow(
+                            title: entry.title,
+                            subtitle: String(localized: .historyRowSubtitleFormat(
+                                String(localized: entry.type.title),
+                                entry.timestamp.formatted(date: .abbreviated, time: .shortened)
+                            ))
+                        ) {
+                            SymbolTile(systemImage: entry.type.systemImage, size: Self.tileSize)
+                        } trailing: {
+                            EmptyView()
+                        }
                     }
+                    .themedRowBackground()
                 }
                 .listStyle(.insetGrouped)
+                .themedListBackground()
             }
         }
         .background(Palette.screenBackground)

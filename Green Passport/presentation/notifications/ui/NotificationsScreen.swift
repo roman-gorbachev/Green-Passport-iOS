@@ -5,19 +5,23 @@ struct NotificationsScreen: View {
 
     var body: some View {
         List(entries ?? []) { entry in
-            VStack(alignment: .leading, spacing: Spacing.xxSmall) {
-                Text(entry.sentAt.formatted(date: .abbreviated, time: .shortened))
-                    .font(.caption.weight(.medium))
-                    .foregroundStyle(Palette.forest)
-                Text(entry.title)
-                    .font(.headline)
-                Text(entry.body)
-                    .font(.subheadline)
-                    .foregroundStyle(Palette.secondaryText)
+            Group {
+                VStack(alignment: .leading, spacing: Spacing.xxSmall) {
+                    Text(entry.sentAt.formatted(date: .abbreviated, time: .shortened))
+                        .font(.caption.weight(.medium))
+                        .foregroundStyle(Palette.forest)
+                    Text(entry.title)
+                        .font(.headline)
+                    Text(entry.body)
+                        .font(.subheadline)
+                        .foregroundStyle(Palette.secondaryText)
+                }
+                .padding(.vertical, Spacing.xxSmall)
             }
-            .padding(.vertical, Spacing.xxSmall)
+            .themedRowBackground()
         }
         .listStyle(.insetGrouped)
+        .themedListBackground()
         .overlay {
             if entries?.isEmpty == true {
                 StateView(kind: .empty(message: .notificationsEmpty))

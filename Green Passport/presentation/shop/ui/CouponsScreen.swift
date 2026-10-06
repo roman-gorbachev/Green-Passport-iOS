@@ -72,7 +72,7 @@ struct CouponsScreen: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 Image(systemName: "chevron.right")
                     .font(.footnote.weight(.semibold))
-                    .foregroundStyle(Color(.tertiaryLabel))
+                    .foregroundStyle(Palette.tertiaryText)
             }
             .padding(Spacing.medium)
             .background(Palette.cardBackground, in: .rect(cornerRadius: CornerRadius.large, style: .continuous))
