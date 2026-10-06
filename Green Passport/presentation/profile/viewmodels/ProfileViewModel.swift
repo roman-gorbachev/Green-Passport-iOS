@@ -12,6 +12,7 @@ final class ProfileViewModel {
     @ObservationIgnored private let observeMessageNotificationsEnabled: ObserveMessageNotificationsEnabledUseCase
     @ObservationIgnored private let notificationPermission: NotificationPermission
     @ObservationIgnored private let appTheme: AppThemeUseCase
+    @ObservationIgnored private let appIcon: AppIconUseCase
     @ObservationIgnored private let sessionTask = LatestTask()
     @ObservationIgnored private var session: AuthSession?
     @ObservationIgnored private var isNotificationPermissionGranted = false
@@ -30,7 +31,8 @@ final class ProfileViewModel {
         setNotificationCategoryEnabled: SetNotificationCategoryEnabledUseCase,
         observeMessageNotificationsEnabled: ObserveMessageNotificationsEnabledUseCase,
         notificationPermission: NotificationPermission,
-        appTheme: AppThemeUseCase
+        appTheme: AppThemeUseCase,
+        appIcon: AppIconUseCase
     ) {
         self.observeSession = observeSession
         self.observeUserProfile = observeUserProfile
@@ -42,7 +44,10 @@ final class ProfileViewModel {
         self.observeMessageNotificationsEnabled = observeMessageNotificationsEnabled
         self.notificationPermission = notificationPermission
         self.appTheme = appTheme
+        self.appIcon = appIcon
         uiState.theme = appTheme.current()
+        uiState.appIcon = appIcon.current()
+        uiState.isAppIconSupported = appIcon.isSupported
     }
 
     func observe() async {
@@ -105,6 +110,18 @@ final class ProfileViewModel {
     func selectTheme(_ theme: AppTheme) {
         appTheme.update(theme)
         uiState.theme = theme
+    }
+
+    func selectAppIcon(_ icon: AppIcon) {
+        let previous = uiState.appIcon
+        uiState.appIcon = icon
+        Task {
+            do {
+                try await appIcon.update(icon)
+            } catch {
+                uiState.appIcon = previous
+            }
+        }
     }
 
     func performSignOut() {

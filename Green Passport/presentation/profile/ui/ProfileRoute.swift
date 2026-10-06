@@ -49,6 +49,8 @@ struct ProfileRoute: View {
             router.push(.moderation)
         case .themeSelected(let theme):
             viewModel.selectTheme(theme)
+        case .appIconSelected(let icon):
+            viewModel.selectAppIcon(icon)
         case .notificationCategoryToggled(let category, let isEnabled):
             viewModel.toggleNotificationCategory(category, isEnabled: isEnabled)
         case .language:

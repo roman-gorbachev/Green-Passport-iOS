@@ -4,6 +4,12 @@ struct EcoTipsListScreen: View {
     private static let thumbnailSize: CGFloat = 64
     private static let previewLineLimit = 2
     private static let metaSeparator = " · "
+    private static let rowInsets = EdgeInsets(
+        top: 0,
+        leading: Spacing.screenHorizontal,
+        bottom: Spacing.small,
+        trailing: Spacing.screenHorizontal
+    )
 
     let uiState: EcoTipsListUiState
     let onFilter: (EcoTipFilter) -> Void
@@ -12,19 +18,21 @@ struct EcoTipsListScreen: View {
     let onRetry: () -> Void
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: Spacing.medium) {
+        List {
+            Group {
                 if let dailyTip = uiState.dailyTip {
                     dailyTipCard(dailyTip)
-                        .padding(.horizontal, Spacing.screenHorizontal)
+                        .listRowInsets(Self.rowInsets)
                 }
                 FilterBar(options: EcoTipFilter.allFilters, selected: uiState.filter, title: { return $0.title }, onSelect: onFilter)
+                    .listRowInsets(EdgeInsets())
                 content
             }
-            .padding(.top, Spacing.xSmall)
-            .padding(.bottom, Spacing.large)
+            .listRowSeparator(.hidden)
+            .listRowBackground(Color.clear)
         }
-        .background(Palette.screenBackground)
+        .listStyle(.plain)
+        .themedListBackground()
         .navigationTitle(Text(.homeTileEcotips))
     }
 
@@ -39,12 +47,10 @@ struct EcoTipsListScreen: View {
         } else if uiState.visibleTips.isEmpty {
             StateView(kind: .empty(message: .ecotipsEmpty))
         } else {
-            VStack(spacing: Spacing.small) {
-                ForEach(uiState.visibleTips) { tip in
-                    row(tip)
-                }
+            ForEach(uiState.visibleTips) { tip in
+                row(tip)
+                    .listRowInsets(Self.rowInsets)
             }
-            .padding(.horizontal, Spacing.screenHorizontal)
         }
     }
 
@@ -116,6 +122,14 @@ struct EcoTipsListScreen: View {
             .background(Palette.cardBackground, in: .rect(cornerRadius: CornerRadius.large, style: .continuous))
         }
         .buttonStyle(.plain)
+        .swipeActions(edge: .trailing) {
+            Button {
+                onToggleBookmark(tip)
+            } label: {
+                Image(systemName: isBookmarked ? "heart.slash.fill" : "heart.fill")
+            }
+            .tint(Palette.forest)
+        }
     }
 }
 

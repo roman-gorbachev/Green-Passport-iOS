@@ -204,7 +204,8 @@ extension AppDIContainer {
                 messageNotificationsRepository: messageNotificationsRepository
             ),
             notificationPermission: notificationPermission,
-            appTheme: AppThemeUseCase(settingsRepository: settingsRepository)
+            appTheme: AppThemeUseCase(settingsRepository: settingsRepository),
+            appIcon: AppIconUseCase(appIconRepository: UIApplicationAppIconRepository())
         )
     }
 
