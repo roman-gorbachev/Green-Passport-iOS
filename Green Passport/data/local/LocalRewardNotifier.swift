@@ -22,7 +22,7 @@ final class LocalRewardNotifier: RewardNotifier {
         let title = String(localized: Self.title(for: reason))
         let body = String(localized: .rewardNotificationBodyFormat(points, xp))
         notificationLogRepository.log(title: title, body: body, sentAt: Date())
-        guard settingsRepository.isNotificationsEnabled else {
+        guard settingsRepository.isNotificationCategoryEnabled(.tasks) else {
             return
         }
         let settings = await center.notificationSettings()

@@ -27,6 +27,9 @@ final class AppDIContainer {
     private lazy var ecoTipsRepository: EcoTipsRepository = FirestoreEcoTipsRepository(firestore: firestore)
     private lazy var communityRepository: CommunityRepository = FirestoreCommunityRepository(firestore: firestore)
     private lazy var chatSettingsRepository: ChatSettingsRepository = FirestoreChatSettingsRepository(firestore: firestore)
+    private lazy var messageNotificationsRepository: MessageNotificationsRepository = FirestoreMessageNotificationsRepository(
+        firestore: firestore
+    )
     private lazy var favoritesRepository: FavoritesRepository = FirestoreFavoritesRepository(firestore: firestore)
     private lazy var moderationRepository: ModerationRepository = FirebaseModerationRepository(
         firestore: firestore,
@@ -190,11 +193,15 @@ extension AppDIContainer {
             observeIsModerator: observeIsModeratorUseCase,
             observeWallet: observeWalletUseCase,
             signOut: signOutUseCase,
-            isNotificationsEnabled: IsNotificationsEnabledUseCase(settingsRepository: settingsRepository),
-            setNotificationsEnabled: SetNotificationsEnabledUseCase(
+            isNotificationCategoryEnabled: IsNotificationCategoryEnabledUseCase(settingsRepository: settingsRepository),
+            setNotificationCategoryEnabled: SetNotificationCategoryEnabledUseCase(
                 settingsRepository: settingsRepository,
+                messageNotificationsRepository: messageNotificationsRepository,
                 notificationPermission: notificationPermission,
                 reminderScheduler: reminderScheduler
+            ),
+            observeMessageNotificationsEnabled: ObserveMessageNotificationsEnabledUseCase(
+                messageNotificationsRepository: messageNotificationsRepository
             ),
             notificationPermission: notificationPermission,
             appTheme: AppThemeUseCase(settingsRepository: settingsRepository)

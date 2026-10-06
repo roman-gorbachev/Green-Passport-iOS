@@ -4,7 +4,7 @@ enum ProfileUserAction {
     case moderation
     case language
     case themeSelected(AppTheme)
-    case notificationsToggled(Bool)
+    case notificationCategoryToggled(NotificationCategory, Bool)
     case signOut
     case retry
 }

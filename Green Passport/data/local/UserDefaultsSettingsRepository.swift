@@ -2,7 +2,7 @@ import Foundation
 
 final class UserDefaultsSettingsRepository: SettingsRepository {
     private static let onboardingSeenKey = "onboarding_seen"
-    private static let notificationsEnabledKey = "notifications_enabled"
+    private static let legacyNotificationsEnabledKey = "notifications_enabled"
     static let themeKey = "app_theme"
 
     private let defaults: UserDefaults
@@ -15,8 +15,9 @@ final class UserDefaultsSettingsRepository: SettingsRepository {
         return defaults.bool(forKey: Self.onboardingSeenKey)
     }
 
-    var isNotificationsEnabled: Bool {
-        return defaults.object(forKey: Self.notificationsEnabledKey) as? Bool ?? true
+    func isNotificationCategoryEnabled(_ category: NotificationCategory) -> Bool {
+        let legacyValue = defaults.object(forKey: Self.legacyNotificationsEnabledKey) as? Bool ?? true
+        return defaults.object(forKey: Self.key(for: category)) as? Bool ?? legacyValue
     }
 
     var theme: AppTheme {
@@ -27,8 +28,12 @@ final class UserDefaultsSettingsRepository: SettingsRepository {
         defaults.set(theme.rawValue, forKey: Self.themeKey)
     }
 
-    func setNotificationsEnabled(_ isEnabled: Bool) {
-        defaults.set(isEnabled, forKey: Self.notificationsEnabledKey)
+    func setNotificationCategory(_ category: NotificationCategory, isEnabled: Bool) {
+        defaults.set(isEnabled, forKey: Self.key(for: category))
+    }
+
+    private static func key(for category: NotificationCategory) -> String {
+        return "notifications_\(category.rawValue)_enabled"
     }
 
     func markOnboardingSeen() {

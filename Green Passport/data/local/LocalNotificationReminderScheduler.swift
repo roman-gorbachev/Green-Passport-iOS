@@ -28,6 +28,7 @@ final class LocalNotificationReminderScheduler: ReminderScheduler {
     func scheduleEventReminder(eventId: String, title: String, at date: Date) async {
         await schedule(
             identifier: Self.identifierPrefix + eventId,
+            category: .events,
             title: String(localized: .eventReminderTitle),
             body: title,
             at: date
@@ -41,6 +42,7 @@ final class LocalNotificationReminderScheduler: ReminderScheduler {
         }
         await schedule(
             identifier: Self.couponIdentifierPrefix + couponId,
+            category: .tasks,
             title: String(localized: .couponExpiresSoon),
             body: String(localized: .couponValidUntilTomorrowMsg(title)),
             at: fireDate
@@ -54,6 +56,7 @@ final class LocalNotificationReminderScheduler: ReminderScheduler {
     func scheduleStreakReminder(streakDays: Int, at date: Date) async {
         await deliver(
             identifier: Self.streakIdentifier,
+            category: .tasks,
             title: String(localized: .streakReminderTitle),
             body: String(localized: .streakReminderBody(streakDays)),
             at: date
@@ -64,20 +67,40 @@ final class LocalNotificationReminderScheduler: ReminderScheduler {
         center.removePendingNotificationRequests(withIdentifiers: [Self.streakIdentifier])
     }
 
-    func cancelAllReminders() {
-        center.removeAllPendingNotificationRequests()
+    func cancelReminders(for category: NotificationCategory) async {
+        let prefixes = Self.identifierPrefixes(for: category)
+        guard !prefixes.isEmpty else {
+            return
+        }
+        let identifiers = await center.pendingNotificationRequests()
+            .map(\.identifier)
+            .filter { identifier in
+                return prefixes.contains { return identifier.hasPrefix($0) }
+            }
+        center.removePendingNotificationRequests(withIdentifiers: identifiers)
     }
 
-    private func schedule(identifier: String, title: String, body: String, at fireDate: Date) async {
-        guard await deliver(identifier: identifier, title: title, body: body, at: fireDate) else {
+    private static func identifierPrefixes(for category: NotificationCategory) -> [String] {
+        switch category {
+        case .events:
+            return [identifierPrefix]
+        case .tasks:
+            return [couponIdentifierPrefix, streakIdentifier]
+        case .messages:
+            return []
+        }
+    }
+
+    private func schedule(identifier: String, category: NotificationCategory, title: String, body: String, at fireDate: Date) async {
+        guard await deliver(identifier: identifier, category: category, title: title, body: body, at: fireDate) else {
             return
         }
         notificationLogRepository.log(title: title, body: body, sentAt: max(fireDate, Date()))
     }
 
     @discardableResult
-    private func deliver(identifier: String, title: String, body: String, at fireDate: Date) async -> Bool {
-        guard settingsRepository.isNotificationsEnabled, await notificationPermission.requestIfNeeded() == .authorized else {
+    private func deliver(identifier: String, category: NotificationCategory, title: String, body: String, at fireDate: Date) async -> Bool {
+        guard settingsRepository.isNotificationCategoryEnabled(category), await notificationPermission.requestIfNeeded() == .authorized else {
             return false
         }
         let content = UNMutableNotificationContent()

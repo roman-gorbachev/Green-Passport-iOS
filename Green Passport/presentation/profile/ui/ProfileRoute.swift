@@ -49,8 +49,8 @@ struct ProfileRoute: View {
             router.push(.moderation)
         case .themeSelected(let theme):
             viewModel.selectTheme(theme)
-        case .notificationsToggled(let isEnabled):
-            viewModel.toggleNotifications(isEnabled)
+        case .notificationCategoryToggled(let category, let isEnabled):
+            viewModel.toggleNotificationCategory(category, isEnabled: isEnabled)
         case .language:
             if let url = URL(string: UIApplication.openSettingsURLString) {
                 openURL(url)

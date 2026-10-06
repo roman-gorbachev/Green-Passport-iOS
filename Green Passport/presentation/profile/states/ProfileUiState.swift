@@ -3,7 +3,7 @@ struct ProfileUiState {
     var isAnonymous = false
     var profile: UserProfile?
     var isModerator = false
-    var notificationsEnabled = true
+    var enabledNotificationCategories = Set(NotificationCategory.allCases)
     var theme: AppTheme = .system
     var level: Level?
     var points = 0

@@ -8,6 +8,13 @@ struct ProfileScreen: View {
     let languageName: String
     let onAction: (ProfileUserAction) -> Void
 
+    private func notificationBinding(_ category: NotificationCategory) -> Binding<Bool> {
+        return Binding(
+            get: { return uiState.enabledNotificationCategories.contains(category) },
+            set: { onAction(.notificationCategoryToggled(category, $0)) }
+        )
+    }
+
     var body: some View {
         List {
             Section {
@@ -27,12 +34,6 @@ struct ProfileScreen: View {
                 if !uiState.isAnonymous {
                     menuButton(title: .editProfile, systemImage: "pencil", color: Palette.forest) {
                         onAction(.editProfile)
-                    }
-                }
-                Toggle(isOn: Binding(get: { return uiState.notificationsEnabled }, set: { onAction(.notificationsToggled($0)) })) {
-                    HStack(spacing: Spacing.small) {
-                        SymbolTile(systemImage: "bell.badge.fill", style: .tinted(Palette.forest), size: Self.tileSize)
-                        Text(.profileNotificationsLabel)
                     }
                 }
                 Picker(selection: Binding(get: { return uiState.theme }, set: { onAction(.themeSelected($0)) })) {
@@ -63,6 +64,18 @@ struct ProfileScreen: View {
                             .foregroundStyle(Color(.tertiaryLabel))
                     }
                 }
+            }
+            Section {
+                ForEach(NotificationCategory.allCases, id: \.self) { category in
+                    Toggle(isOn: notificationBinding(category)) {
+                        HStack(spacing: Spacing.small) {
+                            SymbolTile(systemImage: category.systemImage, style: .tinted(Palette.forest), size: Self.tileSize)
+                            Text(category.title)
+                        }
+                    }
+                }
+            } header: {
+                Text(.notificationsSettings)
             }
             Section {
                 ForEach(ProfileMenuEntry.allCases, id: \.self) { entry in
