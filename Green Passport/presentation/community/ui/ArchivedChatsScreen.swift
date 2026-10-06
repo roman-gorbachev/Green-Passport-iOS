@@ -23,7 +23,7 @@ struct ArchivedChatsScreen: View {
     NavigationStack {
         ArchivedChatsScreen(
             uiState: ChatListUiState(
-                chats: [ChatSummary(chatId: .forum, groupName: nil, lastMessageAt: .now, settings: ChatSettings(chatId: .forum, isPinned: false, isArchived: true, isMuted: true))],
+                chats: [ChatSummary(chatId: .group(id: "1"), groupName: "Эко-Минск", lastMessageAt: .now, settings: ChatSettings(chatId: .group(id: "1"), isPinned: false, isArchived: true, isMuted: false))],
                 isLoading: false
             ),
             onOpenChat: { _ in },

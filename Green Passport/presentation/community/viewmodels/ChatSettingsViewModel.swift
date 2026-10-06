@@ -50,9 +50,14 @@ final class ChatSettingsViewModel {
         guard let userId else {
             return
         }
+        let previous = settings
         settings = updated
         Task {
-            try? await updateChatSettings.execute(updated, userId: userId)
+            do {
+                try await updateChatSettings.execute(updated, userId: userId)
+            } catch {
+                settings = previous
+            }
         }
     }
 

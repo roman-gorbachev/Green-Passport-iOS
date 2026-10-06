@@ -28,7 +28,10 @@ struct MessageComposer: View {
                     .padding(.horizontal, Spacing.medium)
                     .padding(.vertical, Spacing.small)
                     .adaptiveGlassEffect(in: .rect(cornerRadius: CornerRadius.large))
-                Button(action: onSend) {
+                Button {
+                    Keyboard.dismiss()
+                    onSend()
+                } label: {
                     Image(systemName: "arrow.up")
                         .font(.headline)
                         .loadingOverlay(isSending, tint: Palette.onForest)

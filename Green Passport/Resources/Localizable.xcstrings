@@ -921,29 +921,6 @@
         }
       }
     },
-    "chats": {
-      "extractionState": "manual",
-      "localizations": {
-        "be": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Чаты"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Chats"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Чаты"
-          }
-        }
-      }
-    },
     "check_in_on_site": {
       "extractionState": "manual",
       "localizations": {
@@ -1998,6 +1975,29 @@
           "stringUnit": {
             "state": "translated",
             "value": "Создать аккаунт"
+          }
+        }
+      }
+    },
+    "create_group": {
+      "extractionState": "manual",
+      "localizations": {
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Стварыць групу"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Create group"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Создать группу"
           }
         }
       }
@@ -3681,6 +3681,29 @@
         }
       }
     },
+    "groups_not_found": {
+      "extractionState": "manual",
+      "localizations": {
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Нічога не знойдзена"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nothing found"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ничего не найдено"
+          }
+        }
+      }
+    },
     "guest": {
       "extractionState": "manual",
       "localizations": {
@@ -4601,6 +4624,29 @@
         }
       }
     },
+    "member_match_format": {
+      "extractionState": "manual",
+      "localizations": {
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Удзельнік: %1$@"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Member: %1$@"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Участник: %1$@"
+          }
+        }
+      }
+    },
     "message_deleted": {
       "extractionState": "manual",
       "localizations": {
@@ -4804,6 +4850,52 @@
           "stringUnit": {
             "state": "translated",
             "value": "Мои купоны"
+          }
+        }
+      }
+    },
+    "my_groups": {
+      "extractionState": "manual",
+      "localizations": {
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Мае групы"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "My groups"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Мои группы"
+          }
+        }
+      }
+    },
+    "my_groups_empty_msg": {
+      "extractionState": "manual",
+      "localizations": {
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Знайдзіце групу праз пошук або стварыце сваю"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Find a group with search or create your own"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Найдите группу через поиск или создайте свою"
           }
         }
       }
@@ -5471,6 +5563,29 @@
           "stringUnit": {
             "state": "translated",
             "value": "Другое"
+          }
+        }
+      }
+    },
+    "other_groups": {
+      "extractionState": "manual",
+      "localizations": {
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Іншыя групы"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Other groups"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Другие группы"
           }
         }
       }
@@ -6759,6 +6874,29 @@
           "stringUnit": {
             "state": "translated",
             "value": "Сканировать QR-код"
+          }
+        }
+      }
+    },
+    "search_groups_placeholder": {
+      "extractionState": "manual",
+      "localizations": {
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Пошук груп і ўдзельнікаў"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search groups and members"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Поиск групп и участников"
           }
         }
       }

@@ -296,14 +296,25 @@ extension AppDIContainer {
         )
     }
 
-    func buildChatListViewModel(showsArchived: Bool) -> ChatListViewModel {
+    func buildChatListViewModel() -> ChatListViewModel {
         return ChatListViewModel(
-            showsArchived: showsArchived,
             observeSession: observeSessionUseCase,
             observeMyGroups: ObserveMyGroupsUseCase(communityRepository: communityRepository),
-            observeLatestForumPostDate: ObserveLatestForumPostDateUseCase(communityRepository: communityRepository),
             observeChatSettings: ObserveChatSettingsUseCase(chatSettingsRepository: chatSettingsRepository),
             updateChatSettings: UpdateChatSettingsUseCase(chatSettingsRepository: chatSettingsRepository)
+        )
+    }
+
+    func buildCommunityHubViewModel() -> CommunityHubViewModel {
+        return CommunityHubViewModel(
+            observeSession: observeSessionUseCase,
+            observeGroups: ObserveGroupsUseCase(communityRepository: communityRepository),
+            observeLatestForumPostDate: ObserveLatestForumPostDateUseCase(communityRepository: communityRepository),
+            observeChatSettings: ObserveChatSettingsUseCase(chatSettingsRepository: chatSettingsRepository),
+            updateChatSettings: UpdateChatSettingsUseCase(chatSettingsRepository: chatSettingsRepository),
+            fetchMembers: FetchGroupMembersUseCase(communityRepository: communityRepository),
+            createGroup: CreateGroupUseCase(communityRepository: communityRepository, textModerator: textModerator),
+            joinGroupByCode: JoinGroupByCodeUseCase(communityRepository: communityRepository)
         )
     }
 
@@ -324,16 +335,6 @@ extension AppDIContainer {
                     textModerator: textModerator
                 )
             )
-        )
-    }
-
-    func buildGroupsViewModel() -> GroupsViewModel {
-        return GroupsViewModel(
-            observeSession: observeSessionUseCase,
-            observeGroups: ObserveGroupsUseCase(communityRepository: communityRepository),
-            createGroup: CreateGroupUseCase(communityRepository: communityRepository, textModerator: textModerator),
-            joinGroup: JoinGroupUseCase(communityRepository: communityRepository),
-            joinGroupByCode: JoinGroupByCodeUseCase(communityRepository: communityRepository)
         )
     }
 

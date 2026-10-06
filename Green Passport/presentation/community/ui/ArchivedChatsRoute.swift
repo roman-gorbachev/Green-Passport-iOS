@@ -5,7 +5,7 @@ struct ArchivedChatsRoute: View {
     @State private var viewModel: ChatListViewModel
 
     init(container: AppDIContainer) {
-        _viewModel = State(initialValue: container.buildChatListViewModel(showsArchived: true))
+        _viewModel = State(initialValue: container.buildChatListViewModel())
     }
 
     var body: some View {

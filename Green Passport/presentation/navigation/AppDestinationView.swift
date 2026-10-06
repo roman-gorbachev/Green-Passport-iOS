@@ -27,8 +27,6 @@ struct AppDestinationView: View {
             CommunityHubRoute(container: container)
         case .forum:
             ForumRoute(container: container)
-        case .groups:
-            GroupsRoute(container: container)
         case .archivedChats:
             ArchivedChatsRoute(container: container)
         case .group(let id):
