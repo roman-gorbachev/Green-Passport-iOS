@@ -1,4 +1,8 @@
 nonisolated enum AppIcon: String, CaseIterable, Hashable, Sendable {
     case standard
     case dark
+    case sunset
+    case night
+    case ocean
+    case lime
 }

@@ -576,6 +576,75 @@
         }
       }
     },
+    "app_icon_lime": {
+      "extractionState": "manual",
+      "localizations": {
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Лайм"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lime"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Лайм"
+          }
+        }
+      }
+    },
+    "app_icon_night": {
+      "extractionState": "manual",
+      "localizations": {
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ноч"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Night"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ночь"
+          }
+        }
+      }
+    },
+    "app_icon_ocean": {
+      "extractionState": "manual",
+      "localizations": {
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Акіян"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ocean"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Океан"
+          }
+        }
+      }
+    },
     "app_icon_standard": {
       "extractionState": "manual",
       "localizations": {
@@ -595,6 +664,29 @@
           "stringUnit": {
             "state": "translated",
             "value": "Светлая"
+          }
+        }
+      }
+    },
+    "app_icon_sunset": {
+      "extractionState": "manual",
+      "localizations": {
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Захад"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sunset"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Закат"
           }
         }
       }

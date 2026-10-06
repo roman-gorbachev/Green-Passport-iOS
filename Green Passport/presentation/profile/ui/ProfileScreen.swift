@@ -8,24 +8,6 @@ struct ProfileScreen: View {
     let languageName: String
     let onAction: (ProfileUserAction) -> Void
 
-    private func appIconRow(_ icon: AppIcon) -> some View {
-        return Button {
-            onAction(.appIconSelected(icon))
-        } label: {
-            HStack(spacing: Spacing.small) {
-                SymbolTile(systemImage: icon.systemImage, style: .tinted(SectionColor.community), size: Self.tileSize)
-                Text(icon.title)
-                    .foregroundStyle(Color.primary)
-                Spacer()
-                if uiState.appIcon == icon {
-                    Image(systemName: "checkmark")
-                        .font(.body.weight(.semibold))
-                        .foregroundStyle(Palette.forest)
-                }
-            }
-        }
-    }
-
     private func notificationBinding(_ category: NotificationCategory) -> Binding<Bool> {
         return Binding(
             get: { return uiState.enabledNotificationCategories.contains(category) },
@@ -86,8 +68,8 @@ struct ProfileScreen: View {
                 }
                 if uiState.isAppIconSupported {
                     Section {
-                        ForEach(AppIcon.allCases, id: \.self) { icon in
-                            appIconRow(icon)
+                        AppIconPicker(selected: uiState.appIcon) { icon in
+                            onAction(.appIconSelected(icon))
                         }
                     } header: {
                         Text(.appIcon)
