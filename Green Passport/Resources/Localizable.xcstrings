@@ -3819,29 +3819,6 @@
         }
       }
     },
-    "hide_keyboard": {
-      "extractionState": "manual",
-      "localizations": {
-        "be": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Схаваць клавіятуру"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Hide keyboard"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Скрыть клавиатуру"
-          }
-        }
-      }
-    },
     "history_empty": {
       "extractionState": "manual",
       "localizations": {
