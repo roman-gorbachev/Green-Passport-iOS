@@ -52,7 +52,6 @@ struct MapScreen: View {
             }
             position = Self.position(for: focus)
         }
-        .toolbar(.hidden, for: .navigationBar)
     }
 
     private var controls: some View {

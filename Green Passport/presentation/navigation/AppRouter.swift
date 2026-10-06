@@ -1,7 +1,7 @@
 import Observation
 
 @Observable
-final class TabRouter {
+final class AppRouter {
     var path: [AppDestination] = []
 
     func push(_ destination: AppDestination) {

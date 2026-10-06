@@ -1611,6 +1611,29 @@
         }
       }
     },
+    "clear": {
+      "extractionState": "manual",
+      "localizations": {
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ачысціць"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Очистить"
+          }
+        }
+      }
+    },
     "close": {
       "extractionState": "manual",
       "localizations": {
@@ -5429,6 +5452,29 @@
         }
       }
     },
+    "nothing_found": {
+      "extractionState": "manual",
+      "localizations": {
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Нічога не знойдзена"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nothing found"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ничего не найдено"
+          }
+        }
+      }
+    },
     "notifications_empty": {
       "extractionState": "manual",
       "localizations": {
@@ -7016,6 +7062,52 @@
         }
       }
     },
+    "search_ecotips_placeholder": {
+      "extractionState": "manual",
+      "localizations": {
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Пошук парад"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search tips"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Поиск советов"
+          }
+        }
+      }
+    },
+    "search_games_placeholder": {
+      "extractionState": "manual",
+      "localizations": {
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Пошук гульняў"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search games"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Поиск игр"
+          }
+        }
+      }
+    },
     "search_groups_placeholder": {
       "extractionState": "manual",
       "localizations": {
@@ -7035,6 +7127,29 @@
           "stringUnit": {
             "state": "translated",
             "value": "Поиск групп и участников"
+          }
+        }
+      }
+    },
+    "search_tasks_placeholder": {
+      "extractionState": "manual",
+      "localizations": {
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Пошук заданняў"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search tasks"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Поиск заданий"
           }
         }
       }

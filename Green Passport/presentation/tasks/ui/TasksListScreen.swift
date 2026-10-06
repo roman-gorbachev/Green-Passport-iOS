@@ -17,6 +17,11 @@ struct TasksListScreen: View {
         }
         .listStyle(.insetGrouped)
         .themedListBackground()
+        .bottomSearchable(
+            text: Binding(get: { return uiState.query }, set: { onAction(.queryChanged($0)) }),
+            prompt: .searchTasksPlaceholder
+        )
+        .scrollDismissesKeyboard(.interactively)
         .safeAreaInset(edge: .top, spacing: 0) {
             if !uiState.filterChips.isEmpty {
                 activeFilters
@@ -99,7 +104,7 @@ struct TasksListScreen: View {
         } else if uiState.hasError {
             StateView(kind: .error(retry: { onAction(.retry) }))
         } else if uiState.visibleTasks.isEmpty {
-            StateView(kind: .empty(message: .tasksEmpty))
+            StateView(kind: .empty(message: uiState.isSearching ? .nothingFound : .tasksEmpty))
         }
     }
 

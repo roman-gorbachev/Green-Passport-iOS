@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct EcoTipsListRoute: View {
-    @Environment(TabRouter.self) private var router
+    @Environment(AppRouter.self) private var router
     @State private var viewModel: EcoTipsListViewModel
 
     init(container: AppDIContainer) {
@@ -11,6 +11,7 @@ struct EcoTipsListRoute: View {
     var body: some View {
         EcoTipsListScreen(
             uiState: viewModel.uiState,
+            query: Binding(get: { return viewModel.uiState.query }, set: viewModel.updateQuery),
             onFilter: viewModel.select,
             onTip: { router.push(.ecoTipDetail(tipId: $0.id)) },
             onToggleBookmark: viewModel.toggleBookmark,

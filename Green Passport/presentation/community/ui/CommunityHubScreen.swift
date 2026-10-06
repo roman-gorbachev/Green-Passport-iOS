@@ -62,7 +62,7 @@ struct CommunityHubScreen: View {
         }
         .listStyle(.insetGrouped)
         .themedListBackground()
-        .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always), prompt: Text(.searchGroupsPlaceholder))
+        .bottomSearchable(text: $query, prompt: .searchGroupsPlaceholder)
         .scrollDismissesKeyboard(.interactively)
         .onScrollGeometryChange(for: CGFloat.self) { geometry in
             return geometry.contentOffset.y + geometry.contentInsets.top

@@ -3,7 +3,7 @@ import SwiftUI
 struct ProfileRoute: View {
     let container: AppDIContainer
 
-    @Environment(TabRouter.self) private var router
+    @Environment(AppRouter.self) private var router
     @Environment(\.openURL) private var openURL
     @Environment(\.scenePhase) private var scenePhase
     @State private var viewModel: ProfileViewModel

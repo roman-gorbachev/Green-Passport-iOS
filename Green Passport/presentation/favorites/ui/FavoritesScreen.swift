@@ -84,7 +84,6 @@ struct FavoritesScreen: View {
         .overlay {
             overlayState
         }
-        .navigationTitle(Text(.favoritesScreenTitle))
     }
 
     @ViewBuilder

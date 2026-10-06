@@ -6,7 +6,7 @@ struct HomeRoute: View {
 
     let container: AppDIContainer
 
-    @Environment(TabRouter.self) private var router
+    @Environment(AppRouter.self) private var router
     @State private var viewModel: HomeViewModel
     @State private var selectedTask: TaskSheetItem?
     @State private var selectedEvent: EventSheetItem?

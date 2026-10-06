@@ -24,7 +24,6 @@ struct ShopScreen: View {
             }
         }
         .background(Palette.screenBackground)
-        .navigationTitle(Text(.shop))
     }
 
     private var content: some View {

@@ -40,6 +40,10 @@ final class EcoTipsListViewModel {
         start(userId: userId)
     }
 
+    func updateQuery(_ query: String) {
+        uiState.query = query
+    }
+
     func select(_ filter: EcoTipFilter) {
         uiState.filter = filter
     }

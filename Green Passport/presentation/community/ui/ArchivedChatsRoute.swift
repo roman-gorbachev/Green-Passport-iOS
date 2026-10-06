@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct ArchivedChatsRoute: View {
-    @Environment(TabRouter.self) private var router
+    @Environment(AppRouter.self) private var router
     @State private var viewModel: ChatListViewModel
 
     init(container: AppDIContainer) {

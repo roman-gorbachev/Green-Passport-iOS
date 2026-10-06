@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct CommunityHubRoute: View {
-    @Environment(TabRouter.self) private var router
+    @Environment(AppRouter.self) private var router
     @State private var viewModel: CommunityHubViewModel
     @State private var reloadId = 0
 

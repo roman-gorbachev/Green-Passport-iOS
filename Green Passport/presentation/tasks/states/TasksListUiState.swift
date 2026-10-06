@@ -8,6 +8,7 @@ struct TasksListUiState {
     var pendingTaskIds: Set<String> = []
     var profile: UserProfile?
     var filters = TaskFilters()
+    var query = ""
     var isLoading = true
     var hasError = false
     var hasLoadedTasks = false
@@ -16,6 +17,10 @@ struct TasksListUiState {
 
     var visibleTasks: [EcoTask] {
         return tasks(for: filters)
+    }
+
+    var isSearching: Bool {
+        return !query.isBlankSearchQuery
     }
 
     var filterChips: [TaskFilterChip] {
@@ -29,6 +34,7 @@ struct TasksListUiState {
             pendingIds: pendingTaskIds,
             profileCity: profile?.city
         )
+        .filter { return $0.title.matchesSearchQuery(query) }
         guard let profile else {
             return filtered
         }

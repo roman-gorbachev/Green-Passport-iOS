@@ -3,35 +3,39 @@ import SwiftUI
 struct MainTabView: View {
     let container: AppDIContainer
 
-    @State private var homeRouter = TabRouter()
-    @State private var shopRouter = TabRouter()
-    @State private var mapRouter = TabRouter()
-    @State private var favoritesRouter = TabRouter()
+    @State private var router = AppRouter()
+    @State private var selectedTab = MainTab.home
 
     var body: some View {
-        TabView {
-            Tab(String(localized: .home), systemImage: "house") {
-                TabStack(container: container, router: homeRouter) {
-                    HomeRoute(container: container)
+        NavigationStack(path: $router.path) {
+            TabView(selection: $selectedTab) {
+                ForEach(MainTab.allCases, id: \.self) { tab in
+                    Tab(String(localized: tab.title), systemImage: tab.systemImage, value: tab) {
+                        root(for: tab)
+                    }
                 }
             }
-            Tab(String(localized: .shop), systemImage: "bag") {
-                TabStack(container: container, router: shopRouter) {
-                    ShopRoute(container: container)
-                        .navigationBarTitleDisplayMode(.inline)
-                }
+            .navigationTitle(selectedTab.navigationTitle.map { return String(localized: $0) } ?? "")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar(selectedTab.navigationTitle == nil ? .hidden : .visible, for: .navigationBar)
+            .navigationDestination(for: AppDestination.self) { destination in
+                AppDestinationView(destination: destination, container: container)
             }
-            Tab(String(localized: .map), systemImage: "map") {
-                TabStack(container: container, router: mapRouter) {
-                    MapRoute(container: container)
-                }
-            }
-            Tab(String(localized: .favorites), systemImage: "heart") {
-                TabStack(container: container, router: favoritesRouter) {
-                    FavoritesRoute(container: container)
-                        .navigationBarTitleDisplayMode(.inline)
-                }
-            }
+        }
+        .environment(router)
+    }
+
+    @ViewBuilder
+    private func root(for tab: MainTab) -> some View {
+        switch tab {
+        case .home:
+            HomeRoute(container: container)
+        case .shop:
+            ShopRoute(container: container)
+        case .map:
+            MapRoute(container: container)
+        case .favorites:
+            FavoritesRoute(container: container)
         }
     }
 }

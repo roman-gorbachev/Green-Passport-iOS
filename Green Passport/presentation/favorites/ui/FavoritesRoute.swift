@@ -3,7 +3,7 @@ import SwiftUI
 struct FavoritesRoute: View {
     let container: AppDIContainer
 
-    @Environment(TabRouter.self) private var router
+    @Environment(AppRouter.self) private var router
     @State private var viewModel: FavoritesViewModel
     @State private var segment = FavoritesSegment.tasks
     @State private var selectedTask: TaskSheetItem?

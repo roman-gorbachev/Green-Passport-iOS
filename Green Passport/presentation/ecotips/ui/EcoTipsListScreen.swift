@@ -12,6 +12,7 @@ struct EcoTipsListScreen: View {
     )
 
     let uiState: EcoTipsListUiState
+    @Binding var query: String
     let onFilter: (EcoTipFilter) -> Void
     let onTip: (EcoTip) -> Void
     let onToggleBookmark: (EcoTip) -> Void
@@ -33,6 +34,9 @@ struct EcoTipsListScreen: View {
         }
         .listStyle(.plain)
         .themedListBackground()
+        .bottomSearchable(text: $query, prompt: .searchEcotipsPlaceholder)
+        .scrollDismissesKeyboard(.interactively)
+        .animation(.snappy, value: uiState.isSearching)
         .navigationTitle(Text(.homeTileEcotips))
     }
 
@@ -45,7 +49,7 @@ struct EcoTipsListScreen: View {
         } else if uiState.hasError {
             StateView(kind: .error(retry: onRetry))
         } else if uiState.visibleTips.isEmpty {
-            StateView(kind: .empty(message: .ecotipsEmpty))
+            StateView(kind: .empty(message: uiState.isSearching ? .nothingFound : .ecotipsEmpty))
         } else {
             ForEach(uiState.visibleTips) { tip in
                 row(tip)
@@ -140,6 +144,7 @@ struct EcoTipsListScreen: View {
                 tips: [EcoTip(id: "1", category: .article, title: "Как сортировать пластик", body: "Смотрите на маркировку на упаковке: цифра в треугольнике подскажет, куда нести пластик.\n\n## Что означают цифры", mediaUrl: nil, isDailyTip: true, rewardPoints: 10, rewardXp: 20)],
                 isLoading: false
             ),
+            query: .constant(""),
             onFilter: { _ in },
             onTip: { _ in },
             onToggleBookmark: { _ in },

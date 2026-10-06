@@ -3,7 +3,7 @@ import SwiftUI
 struct ShopRoute: View {
     let container: AppDIContainer
 
-    @Environment(TabRouter.self) private var router
+    @Environment(AppRouter.self) private var router
     @State private var viewModel: ShopViewModel
     @State private var pendingReward: Reward?
 

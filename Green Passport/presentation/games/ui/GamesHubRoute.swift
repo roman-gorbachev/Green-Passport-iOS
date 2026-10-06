@@ -13,7 +13,8 @@ struct GamesHubRoute: View {
 
     var body: some View {
         GamesHubScreen(
-            uiState: viewModel.uiState,
+            uiState: viewModel.visibleState,
+            query: Binding(get: { return viewModel.query }, set: viewModel.updateQuery),
             bestScores: viewModel.bestScores,
             onGame: { playingGame = $0 },
             onRetry: viewModel.retry

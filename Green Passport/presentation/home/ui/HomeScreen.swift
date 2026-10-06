@@ -41,9 +41,6 @@ struct HomeScreen: View {
             .animation(.snappy, value: uiState.isLoading)
         }
         .background(Palette.screenBackground)
-        .navigationTitle(Text(.home))
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar(.hidden, for: .navigationBar)
     }
 
     private var header: some View {

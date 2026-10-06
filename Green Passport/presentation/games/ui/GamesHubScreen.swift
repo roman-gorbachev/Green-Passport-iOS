@@ -4,6 +4,7 @@ struct GamesHubScreen: View {
     private static let columnCount = 2
 
     let uiState: ListUiState<Game>
+    @Binding var query: String
     let bestScores: [String: Int]
     let onGame: (Game) -> Void
     let onRetry: () -> Void
@@ -15,6 +16,8 @@ struct GamesHubScreen: View {
                 StateView(kind: .loading)
             case .error:
                 StateView(kind: .error(retry: onRetry))
+            case .success(let games) where games.isEmpty && !query.isBlankSearchQuery:
+                StateView(kind: .empty(message: .nothingFound))
             case .success(let games):
                 ScrollView {
                     LazyVGrid(
@@ -35,9 +38,13 @@ struct GamesHubScreen: View {
                     .padding(.vertical, Spacing.xSmall)
                     .padding(.bottom, Spacing.large)
                 }
+                .scrollDismissesKeyboard(.interactively)
             }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Palette.screenBackground)
+        .dismissesKeyboardOnBackgroundTap()
+        .bottomSearchable(text: $query, prompt: .searchGamesPlaceholder)
         .navigationTitle(Text(.games))
     }
 }
@@ -49,6 +56,7 @@ struct GamesHubScreen: View {
                 Game(id: "eco_runner", titles: ["ru": "Эко-забег"], path: "eco_runner/index.html", sfSymbol: "figure.run", iconEmoji: "🏃", iconColors: ["#34C77B", "#1F6B47"], maxPoints: 30, order: 1),
                 Game(id: "bee_garden", titles: ["ru": "Опылитель"], path: "bee_garden/index.html", sfSymbol: "leaf.fill", iconEmoji: "🐝", iconColors: ["#FFB703", "#FB8500"], maxPoints: 30, order: 2),
             ]),
+            query: .constant(""),
             bestScores: ["eco_runner": 18],
             onGame: { _ in },
             onRetry: {}

@@ -44,6 +44,8 @@ final class TasksListViewModel {
         switch action {
         case .filtersChanged(let filters):
             uiState.filters = filters
+        case .queryChanged(let query):
+            uiState.query = query
         case .favoriteToggled(let task):
             toggleFavorite(task)
         case .taskSelected:
