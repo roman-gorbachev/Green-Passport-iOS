@@ -2,7 +2,7 @@ import SwiftUI
 
 struct CommunityHubScreen: View {
     private static let archiveRevealDistance: CGFloat = 60
-    private static let archiveHideDistance: CGFloat = 80
+    private static let archiveHideDistance: CGFloat = 24
 
     let uiState: CommunityHubUiState
     @Binding var query: String
@@ -58,7 +58,7 @@ struct CommunityHubScreen: View {
             }
         }
         .listStyle(.insetGrouped)
-        .searchable(text: $query, prompt: Text(.searchGroupsPlaceholder))
+        .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always), prompt: Text(.searchGroupsPlaceholder))
         .scrollDismissesKeyboard(.interactively)
         .onScrollGeometryChange(for: CGFloat.self) { geometry in
             return geometry.contentOffset.y + geometry.contentInsets.top
