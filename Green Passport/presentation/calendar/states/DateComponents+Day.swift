@@ -2,7 +2,7 @@ import Foundation
 
 extension DateComponents {
     static func day(containing date: Date) -> DateComponents {
-        return Calendar.current.dateComponents([.year, .month, .day], from: date)
+        return Calendar.current.dateComponents([.year, .month, .day], from: date).dayOnly
     }
 
     var dayOnly: DateComponents {

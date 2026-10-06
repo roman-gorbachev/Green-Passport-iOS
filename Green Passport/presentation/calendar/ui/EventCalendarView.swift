@@ -26,8 +26,13 @@ struct EventCalendarView: UIViewRepresentable {
         let changedDays = Set(previousCounts.keys).union(dayCounts.keys).filter { day in
             return previousCounts[day] != dayCounts[day]
         }
-        if !changedDays.isEmpty {
-            calendarView.reloadDecorations(forDateComponents: Array(changedDays), animated: true)
+        let reloadedDays = changedDays.compactMap { day in
+            return day.startDate.map { date in
+                return calendarView.calendar.dateComponents([.calendar, .era, .year, .month, .day], from: date)
+            }
+        }
+        if !reloadedDays.isEmpty {
+            calendarView.reloadDecorations(forDateComponents: reloadedDays, animated: true)
         }
         if let selection = calendarView.selectionBehavior as? UICalendarSelectionSingleDate,
            selection.selectedDate?.dayOnly != selectedDay {

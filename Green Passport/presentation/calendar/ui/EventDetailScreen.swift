@@ -57,7 +57,9 @@ struct EventDetailScreen: View {
                     .font(.body)
                     .foregroundStyle(Palette.secondaryText)
             }
-            .padding(Spacing.screenHorizontal)
+            .padding(.horizontal, Spacing.screenHorizontal)
+            .padding(.top, Spacing.xLarge)
+            .padding(.bottom, Spacing.screenHorizontal)
             .reportsSheetContentHeight()
         }
         .safeAreaInset(edge: .bottom) {

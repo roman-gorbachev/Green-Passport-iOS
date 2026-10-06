@@ -105,6 +105,9 @@ struct EcoTipDetailScreen: View {
                                 .foregroundStyle(Palette.forest)
                         }
                     }
+                    .padding(.horizontal, Spacing.large)
+                    .padding(.vertical, Spacing.small)
+                    .adaptiveGlassEffect(in: .capsule)
                 } else {
                     VStack(spacing: Spacing.small) {
                         if let failure = uiState.failure {

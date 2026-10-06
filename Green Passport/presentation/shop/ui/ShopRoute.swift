@@ -15,30 +15,19 @@ struct ShopRoute: View {
     var body: some View {
         ShopScreen(
             uiState: viewModel.uiState,
+            pendingReward: pendingReward,
             onPurchase: { reward in
                 if viewModel.canAfford(reward) {
                     pendingReward = reward
                 }
             },
+            onConfirmPurchase: viewModel.purchase,
+            onCancelPurchase: { pendingReward = nil },
             onCoupons: { router.push(.coupons) },
             onRetry: viewModel.retry
         )
         .task {
             await viewModel.observe()
-        }
-        .confirmationDialog(
-            Text(.shopPurchaseButton),
-            isPresented: Binding(get: { return pendingReward != nil }, set: { if !$0 { pendingReward = nil } }),
-            titleVisibility: .visible,
-            presenting: pendingReward
-        ) { reward in
-            Button {
-                viewModel.purchase(reward)
-            } label: {
-                Text(.shopPurchaseButton)
-            }
-        } message: { reward in
-            Text(.exchangePointsForRewardMsg(reward.pointsCost, reward.title))
         }
         .sensoryFeedback(.success, trigger: viewModel.purchaseCount)
         .couponDetailSheet(item: $viewModel.purchasedCoupon, container: container)

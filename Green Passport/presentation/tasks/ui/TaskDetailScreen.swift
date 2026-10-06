@@ -44,15 +44,15 @@ struct TaskDetailScreen: View {
                         VStack(alignment: .leading, spacing: Spacing.xSmall) {
                             Text(task.title)
                                 .font(.title2.bold())
-                            HStack(spacing: Spacing.xSmall) {
-                                PointsBadge(points: task.rewardPoints)
-                                Label {
-                                    Text(task.verification.title)
-                                } icon: {
-                                    Image(systemName: task.verification.systemImage)
+                            ViewThatFits(in: .horizontal) {
+                                HStack(spacing: Spacing.xSmall) {
+                                    PointsBadge(points: task.rewardPoints)
+                                    verificationLabel(task: task)
                                 }
-                                .font(.footnote.weight(.medium))
-                                .foregroundStyle(Palette.secondaryText)
+                                VStack(alignment: .leading, spacing: Spacing.xSmall) {
+                                    PointsBadge(points: task.rewardPoints)
+                                    verificationLabel(task: task)
+                                }
                             }
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -65,7 +65,7 @@ struct TaskDetailScreen: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, Spacing.screenHorizontal)
-                .padding(.top, Spacing.screenHorizontal)
+                .padding(.top, Spacing.xLarge)
                 .padding(.bottom, Spacing.small)
                 .reportsSheetContentHeight()
             }
@@ -75,6 +75,17 @@ struct TaskDetailScreen: View {
                 .padding(.bottom, Spacing.medium)
                 .reportsSheetContentHeight()
         }
+    }
+
+    private func verificationLabel(task: EcoTask) -> some View {
+        return Label {
+            Text(task.verification.title)
+        } icon: {
+            Image(systemName: task.verification.systemImage)
+        }
+        .font(.footnote.weight(.medium))
+        .foregroundStyle(Palette.secondaryText)
+        .lineLimit(1)
     }
 
     @ViewBuilder

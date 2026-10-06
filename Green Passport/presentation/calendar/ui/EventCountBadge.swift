@@ -13,14 +13,10 @@ enum EventCountBadge {
         ]
         .filter { return $0.count > 0 }
         .map { return capsule(count: $0.count, color: $0.color) }
-        let stack = UIStackView(arrangedSubviews: capsules)
-        stack.axis = .horizontal
-        stack.spacing = Self.capsuleSpacing
-        stack.alignment = .center
-        return stack
+        return CapsuleRow(capsules: capsules, spacing: Self.capsuleSpacing)
     }
 
-    private static func capsule(count: Int, color: Color) -> UIView {
+    private static func capsule(count: Int, color: Color) -> UILabel {
         let label = UILabel()
         label.text = count.formatted()
         label.font = UIFont.preferredFont(forTextStyle: .caption2).bold()
@@ -33,11 +29,43 @@ enum EventCountBadge {
         let width = max(side, size.width + Self.horizontalInset * 2)
         label.frame = CGRect(x: 0, y: 0, width: width, height: side)
         label.layer.cornerRadius = side / 2
-        label.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            label.widthAnchor.constraint(equalToConstant: width),
-            label.heightAnchor.constraint(equalToConstant: side),
-        ])
         return label
+    }
+}
+
+private final class CapsuleRow: UIView {
+    private let capsules: [UILabel]
+    private let spacing: CGFloat
+    private let contentSize: CGSize
+
+    init(capsules: [UILabel], spacing: CGFloat) {
+        self.capsules = capsules
+        self.spacing = spacing
+        let width = capsules.map(\.frame.width).reduce(0, +) + spacing * CGFloat(max(0, capsules.count - 1))
+        let height = capsules.map(\.frame.height).max() ?? 0
+        contentSize = CGSize(width: width, height: height)
+        super.init(frame: CGRect(origin: .zero, size: contentSize))
+        capsules.forEach(addSubview)
+    }
+
+    required init?(coder: NSCoder) {
+        return nil
+    }
+
+    override var intrinsicContentSize: CGSize {
+        return contentSize
+    }
+
+    override func sizeThatFits(_ size: CGSize) -> CGSize {
+        return contentSize
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        var x = bounds.midX - contentSize.width / 2
+        for capsule in capsules {
+            capsule.frame.origin = CGPoint(x: x, y: bounds.midY - capsule.frame.height / 2)
+            x += capsule.frame.width + spacing
+        }
     }
 }

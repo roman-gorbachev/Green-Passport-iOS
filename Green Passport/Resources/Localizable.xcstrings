@@ -4854,6 +4854,29 @@
         }
       }
     },
+    "not_registered": {
+      "extractionState": "manual",
+      "localizations": {
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не запісаныя"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not registered"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не записаны"
+          }
+        }
+      }
+    },
     "notifications_empty": {
       "extractionState": "manual",
       "localizations": {
@@ -5701,6 +5724,29 @@
           "stringUnit": {
             "state": "translated",
             "value": "Переработка"
+          }
+        }
+      }
+    },
+    "registered": {
+      "extractionState": "manual",
+      "localizations": {
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Запісаныя"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Registered"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Записаны"
           }
         }
       }

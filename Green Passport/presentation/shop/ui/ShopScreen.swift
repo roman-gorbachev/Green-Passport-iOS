@@ -4,7 +4,10 @@ struct ShopScreen: View {
     private static let rewardThumbnailSize: CGFloat = 56
 
     let uiState: ShopUiState
+    let pendingReward: Reward?
     let onPurchase: (Reward) -> Void
+    let onConfirmPurchase: (Reward) -> Void
+    let onCancelPurchase: () -> Void
     let onCoupons: () -> Void
     let onRetry: () -> Void
 
@@ -95,6 +98,26 @@ struct ShopScreen: View {
             .buttonStyle(.borderedProminent)
             .buttonBorderShape(.capsule)
             .disabled(uiState.purchasingRewardId != nil)
+            .confirmationDialog(
+                Text(.shopPurchaseButton),
+                isPresented: Binding(
+                    get: { return pendingReward?.id == reward.id },
+                    set: { isPresented in
+                        if !isPresented {
+                            onCancelPurchase()
+                        }
+                    }
+                ),
+                titleVisibility: .visible
+            ) {
+                Button {
+                    onConfirmPurchase(reward)
+                } label: {
+                    Text(.shopPurchaseButton)
+                }
+            } message: {
+                Text(.exchangePointsForRewardMsg(reward.pointsCost, reward.title))
+            }
         }
         .padding(.vertical, Spacing.small)
     }
@@ -122,7 +145,10 @@ struct ShopScreen: View {
                 rewards: [Reward(id: "1", title: "Скидка 10% на кофе", partnerName: "Green Coffee", pointsCost: 150)],
                 isLoading: false
             ),
+            pendingReward: nil,
             onPurchase: { _ in },
+            onConfirmPurchase: { _ in },
+            onCancelPurchase: {},
             onCoupons: {},
             onRetry: {}
         )
